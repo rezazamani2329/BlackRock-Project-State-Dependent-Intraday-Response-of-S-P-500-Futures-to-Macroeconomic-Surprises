@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Raw and processed financial data
+data/raw/*
+data/processed/*
+
+# Keep empty folder placeholders
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Large / proprietary datasets
+*.parquet
+*.xlsx
