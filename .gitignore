@@ -23,3 +23,4 @@ data/processed/*
 # Large / proprietary datasets
 *.parquet
 *.xlsx
+.virtual_documents/
