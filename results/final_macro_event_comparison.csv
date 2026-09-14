@@ -1,0 +1,4 @@
+Event,Main Surprise Signal,Typical ES Response,Market Impact Rank,Directional Power Rank,Approx. R2 Range,Statistical Strength,Main Economic Channel
+CPI,Headline CPI,Hotter inflation -> ES lower,1,1,22%-30%,Strong,Inflation / monetary policy / discount rates
+NFP,Nonfarm Payrolls / Wages,Strong payrolls -> modest ES higher; hotter wages -> ES lower,2,3,3%-7%,Weak / Mixed,Growth vs. monetary-policy tradeoff
+PCE,Headline PCE,Hotter inflation -> ES lower,3,2,3%-14%,Moderate at short horizons,Inflation / monetary policy
