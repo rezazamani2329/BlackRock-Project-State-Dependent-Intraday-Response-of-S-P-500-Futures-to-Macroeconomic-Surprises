@@ -1,0 +1,4 @@
+pipeline,n_trades,years,trades_per_year,total_return_%,ann_return_%,ann_vol_%,sharpe,max_drawdown_%,hit_rate_%,avg_win_%,avg_loss_%,profit_factor,pnl_t_stat
+30min,507,9.65,52.5,49.39,4.25,2.11,1.982,-1.48,61.7,0.157,-0.047,5.53,6.16
+60min,499,9.62,51.9,35.59,3.22,2.11,1.512,-2.61,61.7,0.14,-0.07,3.45,4.69
+120min,499,9.62,51.9,20.22,1.93,2.05,0.942,-2.43,55.5,0.159,-0.115,1.73,2.92

@@ -24,3 +24,10 @@ data/processed/*
 *.parquet
 *.xlsx
 .virtual_documents/
+
+# Not part of this project (kept locally only)
+Untitled*.ipynb
+notebooks/Untitled*.ipynb
+notebooks/High_Frequency_Assignment2.ipynb
+01_problem_setup_data.ipynb
+BlackRock Industry Project Intraday.pdf

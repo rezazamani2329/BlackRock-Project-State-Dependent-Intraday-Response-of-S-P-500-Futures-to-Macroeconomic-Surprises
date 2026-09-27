@@ -1,0 +1,13 @@
+{
+  "event_group": "fomc_jolts_pce_claims",
+  "event_types": "FOMC,JOLTS,PCE,Initial Jobless Claims",
+  "path_freq_min": 3,
+  "dtw_window_steps": 5,
+  "lookback_years": 2,
+  "total_games": 5563,
+  "scored_games": 4749,
+  "pearson_ic": 0.11619322960143467,
+  "spearman_ic": 0.06996327441282503,
+  "hit_rate": 0.5150558012213098,
+  "q5_q1_spread": 0.00031541020909895247
+}
