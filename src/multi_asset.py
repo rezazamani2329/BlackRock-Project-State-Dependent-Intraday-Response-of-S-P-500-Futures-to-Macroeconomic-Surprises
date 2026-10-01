@@ -37,6 +37,7 @@ SPECS = {
     "ES": dict(tick=0.25, point_value=50.0, name="E-mini S&P 500"),
     "NQ": dict(tick=0.25, point_value=20.0, name="E-mini Nasdaq-100"),
     "ZN": dict(tick=1 / 64, point_value=1000.0, name="10-year T-note"),
+    "YM": dict(tick=1.0, point_value=5.0, name="E-mini Dow"),
 }
 
 

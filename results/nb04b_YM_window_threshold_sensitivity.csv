@@ -1,0 +1,21 @@
+variant,universe,strategy,sharpe_net,trades,avg_net_bps
+"expanding, thr=1.0 (base)",CPI,Surprise only,0.8415371319736137,48,10.38003279685145
+"expanding, thr=1.0 (base)",CPI,Surprise + State,0.8309484095217028,51,9.632258712895684
+"expanding, thr=1.0 (base)",ALL,Surprise only,0.7844380487303333,91,5.681367890481779
+"expanding, thr=1.0 (base)",ALL,Surprise + State,0.6398899098531454,111,3.470925056563781
+"rolling 60 events, thr=1.0",CPI,Surprise only,0.694242585722565,46,8.36521678004074
+"rolling 60 events, thr=1.0",CPI,Surprise + State,0.7465163867595577,54,8.377279891678134
+"rolling 60 events, thr=1.0",ALL,Surprise only,0.6500721683181965,81,5.071150905659479
+"rolling 60 events, thr=1.0",ALL,Surprise + State,0.3895941639624873,122,2.0735985150805676
+"rolling 36 events, thr=1.0",CPI,Surprise only,0.7074226622184762,45,8.341424974805689
+"rolling 36 events, thr=1.0",CPI,Surprise + State,0.7169610773169961,54,7.980796740519811
+"rolling 36 events, thr=1.0",ALL,Surprise only,0.41869635756488793,105,2.9332383186524353
+"rolling 36 events, thr=1.0",ALL,Surprise + State,0.4482722720935297,152,2.194268535405346
+"expanding, thr=0 (always trade)",CPI,Surprise only,0.9946876812166352,77,8.867962164999007
+"expanding, thr=0 (always trade)",CPI,Surprise + State,0.7973794442918944,77,7.219612850273999
+"expanding, thr=0 (always trade)",ALL,Surprise only,0.462104632193727,240,1.9971295446097872
+"expanding, thr=0 (always trade)",ALL,Surprise + State,0.050347270709224214,240,0.19933926161254784
+"expanding, thr=2.0",CPI,Surprise only,0.80077717392358,43,9.99095496719931
+"expanding, thr=2.0",CPI,Surprise + State,0.7297795827496139,46,9.118612741215383
+"expanding, thr=2.0",ALL,Surprise only,0.6265574690737251,73,5.194974965933907
+"expanding, thr=2.0",ALL,Surprise + State,0.5711115997784609,83,4.135691462501654
