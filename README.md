@@ -1367,6 +1367,8 @@ The earlier three-market composites (`fig*_3markets.png`) are kept next to the f
 - **Aaryen Mehta:** the ±5σ winsorisation and the surprise + DTW + momentum classifier.
 - **Reza Zamani:** causal surprises, event studies, state conditioning, the walk-forward engine, the multi-release and multi-market books, the surprise + DTW tests, the YM extension (Notebooks 02b–08b YM and the YM switch in the team's DTW book), and the team comparison at equal costs.
 
+The team's shared code and results, including Jack Duncan's DTW event book and the other workstreams, are in the team repository: [github.com/jack-duncan/blackrock-intraday](https://github.com/jack-duncan/blackrock-intraday). A copy of that code (without the papers, market data or keys) is in `team_dtw_code/` in this repository.
+
 ---
 
 ## 11. Acknowledgements
