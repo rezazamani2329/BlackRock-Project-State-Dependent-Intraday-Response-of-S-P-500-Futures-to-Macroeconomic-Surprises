@@ -1,0 +1,2 @@
+wait_min,path_pre_min,path_len,weighting,k,lookback_years,n_assets,train_games,valid_games,train_dir_ic,valid_dir_ic,train_disp_ic,valid_disp_ic,train_hit,valid_hit,train_q51,valid_q51
+5,45,50,recency,15,5,3,2430,2635,0.030428691562905633,-0.0005658397199991653,0.14729156492174522,0.10896098367592914,0.5177018644489061,0.5033859318237343,0.0001220480659327,-7.350073529585823e-05

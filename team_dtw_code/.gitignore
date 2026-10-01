@@ -1,0 +1,32 @@
+__pycache__/
+*.pyc
+.DS_Store
+.pytest_cache/
+.venv/
+.ipynb_checkpoints/
+.env
+
+# raw/processed market data is large and not for version control
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# exceptions: derived outputs small enough to share, or needed by teammates
+
+# jack's personal working data, same rule as above
+jack/data/*
+!jack/data/.gitkeep
+
+# combined/ derived outputs — regenerate with cleaning.py / features.py / backtest.py
+# combined/output/ results are kept in this copy (parquet panels excluded)
+combined/output/**/*.parquet
+
+# hoshea fork of combined/; search CSVs are small enough to share
+combined_modified_hoshea/output/*
+!combined_modified_hoshea/output/.gitkeep
+!combined_modified_hoshea/output/hp_search_*.csv
+
+# Papers live in the personal repo, not here
+paper/
+paper_dtw/

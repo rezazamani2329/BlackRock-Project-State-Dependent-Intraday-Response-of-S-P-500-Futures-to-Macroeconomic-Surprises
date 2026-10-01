@@ -1,0 +1,14 @@
+,ES,NQ,YM,ZN
+clean bars,5392615,5255764,5195343,5392031
+"games, all families",57146,55317,54455,56665
+releases (event_ts),9301,9031,8907,9198
+families admitted (some year),8,8,5,12
+admitted games,3420,2735,2390,5420
+"admitted games, burn-in 2010-12",0,0,0,115
+"admitted games, train",820,525,640,1085
+"admitted games, valid",840,665,460,1130
+"admitted games, test",1760,1545,1290,3090
+admitted games at T+1,684,547,478,1084
+"median dtw_disp, bps",17.821081899425913,24.062561900454636,16.993546963811422,6.096897601803844
+"sd of 30-min return on admitted games, bps",24.769797263042058,34.703510689370766,24.308106525999065,8.578460577495518
+admitted families,"CPI Index NSA @ 08:30, Change in Manufact. Payrolls @ 08:30, Core PCE Price Index QoQ @ 08:30, FOMC Meeting Minutes @ 14:00, ISM Manufacturing @ 10:00, ISM Services Index @ 10:00, Retail Sales Advance MoM @ 08:30, Wholesale Inventories MoM @ 10:00","CPI Index NSA @ 08:30, Change in Manufact. Payrolls @ 08:30, Core PCE Price Index QoQ @ 08:30, FOMC Meeting Minutes @ 14:00, ISM Manufacturing @ 10:00, ISM Services Index @ 10:00, New Home Sales @ 10:00, Richmond Fed Manufact. Index @ 10:00","CPI Index NSA @ 08:30, Change in Manufact. Payrolls @ 08:30, FOMC Meeting Minutes @ 14:00, ISM Manufacturing @ 10:00, ISM Services Index @ 10:00","Business Inventories @ 10:00, CPI Index NSA @ 08:30, Change in Manufact. Payrolls @ 08:30, Core PCE Price Index QoQ @ 08:30, Dallas Fed Services Activity @ 10:30, Durable Goods Orders @ 08:30, FOMC Meeting Minutes @ 14:00, ISM Manufacturing @ 10:00, ISM Services Index @ 10:00, Philadelphia Fed Business Outlook @ 08:30, Retail Sales Advance MoM @ 08:30, S&P Global US Services PMI @ 09:45"

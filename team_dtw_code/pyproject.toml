@@ -1,0 +1,30 @@
+[project]
+name = "blackrock-intraday"
+version = "0.1.0"
+description = "Intraday S&P futures trading strategy research using dynamic time warping"
+requires-python = ">=3.12"
+dependencies = [
+    "pandas>=2.3.3",
+    "numpy>=2.4.3",
+    "scipy>=1.17.1",
+    "statsmodels>=0.14.6",
+    "dtaidistance>=2.3.13",
+    "matplotlib>=3.10.8",
+    "seaborn>=0.13.2",
+    "pyarrow>=19.0.0",
+    "jupyter>=1.1.1",
+    "ipykernel>=6.30.0",
+    "jupytext>=1.17.0",
+    "nbformat>=5.10.4",
+    "databento>=0.40.0",
+    "tqdm>=4.67.0",
+    "mplfinance>=0.12.10b0",
+    "python-dotenv>=1.2.2",
+    "fredapi>=0.5.2",
+    "scikit-learn>=1.9.0",
+    "arch>=8.0.0",
+    "openpyxl>=3.1.5",
+]
+
+[tool.jupytext]
+formats = "ipynb,py:percent"
