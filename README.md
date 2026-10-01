@@ -1313,7 +1313,7 @@ Every notebook ends with a **Purpose, Research Questions, Answers and Conclusion
 
 | File | Content |
 |---|---|
-| `Reza_BlackRock_presentation.pptx` / `.pdf` | My presentation of this study: macro surprises, the pre-event state and DTW on ES, NQ and ZN (Notebooks 01–08) |
+| `Reza_BlackRock_presentation.pptx` / `.pdf` | My presentation of this study (40 slides): macro surprises, the pre-event state and DTW on ES, NQ, YM and ZN (Notebooks 01–08b), including the ES + NQ + YM book |
 | `Team_Results_presentation.pptx` / `.pdf` | The team's results presentation, updated with YM: each workstream at equal costs, the surprise and DTW books by market, and the final team portfolios (ES, NQ, YM, ZN) |
 
 ---
