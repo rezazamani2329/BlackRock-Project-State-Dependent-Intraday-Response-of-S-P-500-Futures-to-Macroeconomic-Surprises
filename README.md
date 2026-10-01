@@ -1294,6 +1294,8 @@ Python 3.10+, numpy, pandas, matplotlib, pyarrow (parquet), openpyxl (Bloomberg 
 ├── figures/                 PNG outputs, same prefixes; fig*_4markets.png combine the four markets
 ├── papers/                  the two paper drafts (PDF + LaTeX), see papers/README.md
 ├── team_dtw_code/           copy of the team's DTW code and results (combined/, with YM), see README_COPY.md
+├── Reza_BlackRock_presentation.pptx/.pdf    my presentation
+├── Team_Results_presentation.pptx/.pdf      the team's results presentation (with YM)
 └── data/                    raw/ and processed/ (gitignored)
 ```
 
@@ -1306,6 +1308,13 @@ Every notebook ends with a **Purpose, Research Questions, Answers and Conclusion
 | `papers/journal_paper/` | *Surprises, Shapes or Machines? Forecasting the Market's Response to Macroeconomic Releases with Dynamic Time Warping (DTW)*, full draft (`main_journal_draft.pdf`, ~59 pages) covering all four markets, with an appendix of figures and tables from Notebooks 02–07 and a section on directions for future research |
 | `papers/dtw_structured_paper/` | Short paper on the team's DTW event book in the team outline (`main_structured_second_draft.pdf`, 13 pages), including YM |
 | `team_dtw_code/` | The team's DTW pipeline (`combined/`: pull, cleaning, features, backtest), with the `DTW_EXTRA=YM` switch that adds YM and writes to `combined/output/with_YM/`, and the teammates' code. Market data, Bloomberg files and keys are not included. |
+
+### 9.6 Presentations
+
+| File | Content |
+|---|---|
+| `Reza_BlackRock_presentation.pptx` / `.pdf` | My presentation of this study: macro surprises, the pre-event state and DTW on ES, NQ and ZN (Notebooks 01–08) |
+| `Team_Results_presentation.pptx` / `.pdf` | The team's results presentation, updated with YM: each workstream at equal costs, the surprise and DTW books by market, and the final team portfolios (ES, NQ, YM, ZN) |
 
 ---
 
