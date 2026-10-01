@@ -1,0 +1,754 @@
+\clearpage
+\section{Additional Figures and Tables}\label{app:additional}
+
+This appendix collects supporting results from the project's notebooks 02--07, in the order of
+the analysis: the event study (notebook 02), state dependence (03), the walk-forward CPI strategy
+(04), the broad surprise book (05), surprise and DTW (06) and the multi-market book (07). Unless noted, the evaluation window is 2019--2026, the cost is two
+ticks plus \$4.50 per round trip, and every estimate uses only earlier data.
+
+\FloatBarrier
+\subsection{Event study (notebook 02)}
+
+Figure~\ref{fig:app_es_event} shows, for \ES, how large the move after CPI, payrolls and PCE is at
+each horizon and how much of it the surprise explains. The move after CPI keeps growing for about
+30 minutes; the share explained by the surprise is highest at one minute and stays near 0.25,
+while payrolls move \ES\ almost as much but with an $R^2$ below 0.07. Figure~\ref{fig:app_es_beta}
+shows the coefficient of each headline surprise by horizon: a one-standard-deviation hot CPI
+print lowers \ES\ by 18 bps after one minute and by about 24 bps after 30 minutes. Table~\ref{tab:app_impact}
+reports the mean absolute move in all four markets.
+
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure}[b]{0.49\linewidth}\centering
+    \includegraphics[width=\linewidth]{app_macro_market_impact}
+    \caption{Mean absolute \ES\ return after each release.}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.49\linewidth}\centering
+    \includegraphics[width=\linewidth]{app_macro_r2_comparison}
+    \caption{$R^2$ of the surprise regressions.}
+  \end{subfigure}
+  \caption{\ES\ after CPI, payrolls (NFP) and PCE, 2016--2026, by horizon.}
+  \label{fig:app_es_event}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.62\linewidth]{app_macro_surprise_coefficients}
+  \caption{\ES\ response to a one-standard-deviation surprise in each headline statistic, by
+  horizon (bps), from regressions on all surprise components of the release.}
+  \label{fig:app_es_beta}
+\end{figure}
+
+\begin{table}[!htb]
+  \centering\small
+  \caption{Mean absolute return after the release (bps), 2016--2026.}\label{tab:app_impact}
+  \begin{tabular}{llccccc}
+    \toprule
+    Market & Release & 1 min & 5 min & 15 min & 30 min & 60 min \\
+    \midrule
+    \ES & CPI & 28.1 & 31.4 & 34.6 & 38.5 & 37.8 \\
+        & NFP & 21.5 & 26.3 & 26.1 & 29.6 & 29.2 \\
+        & PCE &  7.0 &  9.4 & 12.9 & 14.9 & 18.1 \\
+    \NQ & CPI & 38.6 & 44.7 & 48.4 & 53.6 & 54.0 \\
+        & NFP & 25.6 & 31.6 & 31.5 & 36.0 & 35.1 \\
+        & PCE &  9.2 & 12.5 & 17.2 & 18.5 & 23.2 \\
+    \YM & CPI & 23.7 & 27.7 & 29.6 & 33.2 & 33.3 \\
+        & NFP & 19.3 & 23.7 & 25.0 & 27.9 & 28.6 \\
+        & PCE &  5.4 &  7.3 & 10.2 & 11.9 & 15.9 \\
+    \ZN & CPI & 18.4 & 20.2 & 21.4 & 22.5 & 24.0 \\
+        & NFP & 20.0 & 21.6 & 22.2 & 23.6 & 24.4 \\
+        & PCE &  4.9 &  6.1 &  7.3 &  8.3 &  9.3 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\FloatBarrier
+\subsection{State dependence (notebook 03)}
+
+Table~\ref{tab:app_states} lists the six pre-registered state variables, all measured before the
+release, with the hypothesis each was chosen to test. Four further variables are reported in the
+figures but were not used to select models: 5-day momentum, the gap to the 50-day moving average,
+realized volatility over the last 60 minutes, and the return over the last 60 minutes.
+
+\begin{table}[!htb]
+  \centering\small
+  \caption{Pre-registered state variables and hypotheses.}\label{tab:app_states}
+  \begin{tabular}{p{0.15\linewidth}p{0.36\linewidth}p{0.41\linewidth}}
+    \toprule
+    State & Definition (known before $T$) & Hypothesis \\
+    \midrule
+    \texttt{rv\_20d} & 20-day realized volatility of daily closes (annualized \%) & High-volatility regimes give a larger surprise beta (uncertainty, thinner liquidity) \\
+    \texttt{rv\_pre\_1d} & Realized volatility of 5-minute returns over the last $\sim$23 trading hours (bps) & Short-term stress amplifies the reaction \\
+    \texttt{mom\_20d} & 20-day log return (\%) & After strong rallies, bad news hits harder (stretched positioning) \\
+    \texttt{dd\_60d} & Distance from the 60-day high (\%) & In drawdowns the market is more sensitive to inflation news \\
+    \texttt{overnight\_ret} & Return from the prior 16:00 ET close to $T-1$ (bps) & A large pre-release move signals partial pre-positioning, so less is left to react \\
+    \texttt{prev\_x} & Previous signed surprise of the same family & Surprise streaks: a second hot print confirms the trend, so the response is larger \\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip\footnotesize Exploratory (reported, not used for selection): \texttt{mom\_5d},
+  \texttt{ma50\_gap}, \texttt{rv\_pre\_60m}, \texttt{ret\_pre\_60m}. Each state enters
+  equation~\eqref{eq:state} as a percentile against its trailing one-year distribution.
+\end{table}
+
+Figure~\ref{fig:app_daily_state} shows three of the daily states in each market from 2010 to
+2026, computed on roll-adjusted daily closes. The states vary a lot over the sample, so the terciles
+used below compare genuinely different regimes: 20-day volatility in the equity indices is near
+10\% in the quiet years before 2018 and peaks at 90--100\% in March 2020, with further spikes in
+2011, 2015, 2018, 2022 and April 2025, and drawdowns from the 60-day high reach $-35$ to $-40\%$ in
+2020. \ZN's states move with the rate cycle rather than with equity stress: its volatility is
+elevated through 2022--2023 and its deepest drawdown ($-10\%$) is in 2022. The \ES\ volatility of
+about 85\% in 2011 is overstated: the notebook computes it from the original vendor file, whose
+early sessions are incomplete; \YM, from a complete file, peaks at about 45\% in the same episode.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=\linewidth]{app_daily_state_4markets}
+  \caption{Daily state features, 2010--2026: 20-day realized volatility (annualized \%), 20-day
+  momentum (\%) and distance from the 60-day high (\%), computed on roll-adjusted daily closes. The
+  2011 \ES\ volatility spike reflects incomplete sessions in the original vendor file.}
+  \label{fig:app_daily_state}
+\end{figure}
+
+Figure~\ref{fig:app_buckets} splits the five-minute CPI beta by tercile of each pre-release state
+in \ES\ and \YM. The beta rises from under 10 bps per standard deviation in the calmest third of
+20-day volatility to 40--70 bps in the middle and top thirds in both markets, the clearest pattern among the
+six states. Table~\ref{tab:app_state} lists the strongest of the 48 primary tests in
+each market. Figure~\ref{fig:app_pvalues} shows that the analytic HC3 and permutation $p$-values
+agree closely, so the inference does not depend on the normal approximation.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=\linewidth]{app_bucket_betas_ES_YM}
+  \caption{Five-minute CPI surprise beta (bps per SD, 95\% intervals) by tercile of each
+  pre-release state: 20-day realized volatility, previous-day volatility, 20-day momentum, 60-day
+  drawdown, overnight return and previous surprise.}
+  \label{fig:app_buckets}
+\end{figure}
+
+\begin{table}[!htb]
+  \centering\small
+  \caption{Strongest state interactions among the 48 primary tests, 2016--2026.}\label{tab:app_state}
+  \begin{threeparttable}
+  \begin{tabular}{lllcccc}
+    \toprule
+    Market & Interaction & Target & $d$ (bps) & $t$ (HC3) & $p$ (perm.) & $q$ (BH) \\
+    \midrule
+    \ES & CPI $\times$ 20-day vol & 5-min reaction & $+61.1$ & 3.81 & 0.000 & 0.010 \\
+        & NFP $\times$ 20-day vol & 30-min drift & $-12.2$ & $-2.99$ & 0.016 & 0.082 \\
+        & All $\times$ overnight return & 30-min drift & $+7.4$ & 2.65 & 0.021 & 0.134 \\
+    \YM & CPI $\times$ 20-day vol & 5-min reaction & $+58.7$ & 3.74 & 0.004 & 0.014 \\
+        & NFP $\times$ previous-day vol & 5-min reaction & $-21.0$ & $-3.07$ & 0.012 & 0.042 \\
+        & NFP $\times$ 20-day vol & 5-min reaction & $-17.3$ & $-3.11$ & 0.014 & 0.042 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Notes: $d$ is the change in the surprise beta from the calmest to the most stressed state
+    in equation~\eqref{eq:state}. $q$: Benjamini--Hochberg over the 48 primary tests per market. The
+    NFP effects in \YM\ come entirely from 2016--2020.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=\linewidth]{app_fig13_pvalue_comparison_3markets}
+  \caption{Analytic (HC3) against permutation $p$-values for the primary state tests, \ES, \NQ\ and \ZN.}
+  \label{fig:app_pvalues}
+\end{figure}
+
+\paragraph{Interaction regressions (notebook 03, section 9).} Rather than splitting the releases
+into terciles, the interaction regression uses the full sample at once. For release $i$,
+\begin{equation}\label{eq:app_inter}
+  r_i = a + b\,x_i + c\,s_i + d\,(x_i\times s_i) + \varepsilon_i,\qquad s_i=\text{pct}_i-0.5,
+\end{equation}
+where $x_i$ is the signed surprise and $\text{pct}_i$ the percentile of the state against its
+trailing one-year distribution. Centering the state makes $b$ the surprise beta at the median
+state; $c$ asks whether the state predicts the return on its own; and $d$, the key coefficient, is
+the change in the surprise beta from the lowest to the highest state percentile. Because $x$ is
+signed so that $b>0$, a positive $d$ means a stronger reaction in the high state. The pooled model
+(\texttt{ALL}) gives each family its own intercept and slope but a common $c$ and $d$. Each market
+has 360 regressions: ten states (six primary, four exploratory), four families (CPI, NFP, PCE and
+pooled) and nine targets (the reaction from the pre-release price at 1--60 minutes and the drift
+from one minute after the release at 5--60 minutes). Standard errors are HC3. The 48 primary tests
+(six states, four families, two targets: the five-minute reaction and the 30-minute drift) also get
+a 2,000-draw permutation test and the Benjamini--Hochberg correction. A credible state effect looks
+like a row of same-colored cells across horizons; a single bold cell among about 90 is what chance
+produces, since at 5\% significance four to five false positives are expected per heat map.
+
+The CPI heat maps are in Figure~\ref{fig:state} of the main text. Figures~\ref{fig:app_inter_nfp}--\ref{fig:app_inter_all}
+show the other families. For payrolls (Figure~\ref{fig:app_inter_nfp}), the volatility rows are
+negative: strong payrolls help equities less when volatility is high. The pattern is strongest in
+\YM, where both 20-day and previous-day volatility have $t$-statistics of $-3.1$ to $-4.5$ on the
+5- to 60-minute reactions, and present in \ES\ on the drifts; but in \YM\ it comes entirely from 2016--2020,
+so it is not used for trading. PCE (Figure~\ref{fig:app_inter_pce}) shows only scattered cells with
+no consistent row, as expected for a release whose surprise explains little of the move. In the
+pooled model (Figure~\ref{fig:app_inter_all}), the overnight return and 5-day momentum rows are
+positive on the 15--60-minute drifts in \ES\ and \YM\ ($t$ of 2.1--2.9): the drift follows the surprise
+more strongly after a market has already been rising. Only the \ES\ overnight-return effect on the
+30-minute drift is a primary test, and it does not survive the correction ($q=0.13$). In \ZN, the
+previous-day volatility row is negative on every drift ($t$ of $-2.1$ to $-3.2$): after volatile
+days, the little drift \ZN\ has is even smaller.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=\linewidth]{app_interaction_NFP_4markets}
+  \caption{Payrolls (NFP): $t$-statistics of the surprise $\times$ state interaction $d$ in
+  equation~\eqref{eq:app_inter}, by state (rows) and target (columns). Bold: $|t|>1.96$.}
+  \label{fig:app_inter_nfp}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=\linewidth]{app_interaction_PCE_4markets}
+  \caption{PCE: $t$-statistics of the surprise $\times$ state interaction $d$, by state and target.}
+  \label{fig:app_inter_pce}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=\linewidth]{app_interaction_ALL_4markets}
+  \caption{All three families pooled (family-specific intercepts and slopes, common $c$ and $d$):
+  $t$-statistics of the surprise $\times$ state interaction, by state and target.}
+  \label{fig:app_inter_all}
+\end{figure}
+
+\FloatBarrier
+\subsection{Walk-forward CPI strategy (notebook 04)}
+
+Figure~\ref{fig:app_latency} shows how the CPI strategy's Sharpe ratio changes with the entry
+delay and the exit time. In both \ES\ and \YM\ the 30-minute exit is the best column at every
+delay, and short holds lose most of their value when the entry is delayed. Figure~\ref{fig:app_paths}
+shows the walk-forward estimates behind the state model: the CPI drift slope in \ES\
+fell to about 1 bp per standard deviation in 2021 and rose to 6--8 bps from 2023, and the
+$t$-statistic of the volatility interaction stays below about 2 until 2022 in \ES\ and \NQ\ and
+never reaches it in \ZN.
+Figures~\ref{fig:app_peer}--\ref{fig:app_peer_all} show the walk-forward strategies in the peer
+chart format (notebook 04, section 16.5): the strategy before and after costs against being
+always long, one contract, in exactly the same 30-minute windows. In the three equity indices the
+strategies and the always-long line diverge from 2022: trading the CPI surprise gains 6.6\% in
+\ES, 7.5\% in \NQ\ and 5.0\% in \YM\ while always long in the same windows loses 5--6\%, so the
+profit comes from the direction of the surprise, not from being in the market at release times.
+The naive sign rule and the model on CPI, PCE and payrolls show the same pattern. In \ZN\ the
+surprise model trades only a handful of releases, because its predicted drift rarely exceeds the
+cost of one \ZN\ tick, and the naive rule loses after costs.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.85\linewidth]{app_latency_grid_ES_YM}
+  \caption{Net Sharpe ratio of the CPI strategies by extra entry delay (rows) and exit time
+  (columns), 2019--2026. Left: surprise only; right: surprise and state.}
+  \label{fig:app_latency}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.62\linewidth]{app_fig17_coefficient_paths_3markets}
+  \caption{Walk-forward estimates for CPI, re-estimated before each release: the surprise slope and
+  the surprise $\times$ 20-day volatility interaction with their $t$-statistics, \ES, \NQ\ and \ZN.}
+  \label{fig:app_paths}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=\linewidth]{app_peer_CPI_surprise_only_4markets}
+  \caption{Peer chart format, CPI surprise model, 2019--2026: cumulative return of one contract,
+  gross and net of costs, against always long in the same windows.}
+  \label{fig:app_peer}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=\linewidth]{app_peer_CPI_naive_4markets}
+  \caption{Peer chart format, CPI naive sign rule (every CPI release, sign of the headline
+  surprise), 2019--2026.}
+  \label{fig:app_peer_naive}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=\linewidth]{app_peer_ALL_surprise_only_4markets}
+  \caption{Peer chart format, surprise model on CPI, PCE and payrolls, 2019--2026.}
+  \label{fig:app_peer_all}
+\end{figure}
+
+\paragraph{Final comparison.} Table~\ref{tab:app_final} and Figure~\ref{fig:app_final} compare
+the five CPI strategies of notebook 04 (section 14) in all four markets and three release
+universes. In the equity indices every CPI strategy has a positive Sharpe ratio, and the naive
+sign rule is the best or close to it (1.03 in \ES, 1.00 in \NQ, 0.99 in \YM); conditioning on the
+pre-release state never improves on the surprise alone by a significant margin (the smallest
+bootstrap probability that a state model is not better is 0.23). Adding PCE and payrolls lowers the
+naive rule in \ES\ and \NQ\ but less so in \YM. In \ZN\ the fitted models almost never trade,
+because their predicted drift rarely exceeds one tick, and every strategy is negative.
+
+\begin{table}[!htb]
+  \centering\small
+  \caption{Walk-forward CPI strategies, net Sharpe ratio (90\% block-bootstrap interval), 2019--2026,
+  2 ticks + \$4.50.}\label{tab:app_final}
+  \begin{threeparttable}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{lcccc}
+    \toprule
+    Strategy & \ES & \NQ & \YM & \ZN \\
+    \midrule
+    \multicolumn{5}{l}{\emph{CPI only}} \\
+    Naive sign & 1.03 [0.32, 1.76] & 1.00 [0.37, 1.66] & 0.99 [0.27, 1.72] & $-0.05$ [$-0.82$, 0.56] \\
+    Surprise only & 0.99 [0.25, 1.72] & 0.79 [0.12, 1.47] & 0.84 [0.07, 1.61] & $-0.51$ (2 trades) \\
+    Surprise + State & 0.77 [0.01, 1.51] & 0.75 [0.04, 1.44] & 0.83 [0.13, 1.51] & $-0.40$ (5 trades) \\
+    Surprise + State filter & 1.07 [0.40, 1.67] & 0.82 [0.20, 1.38] & 0.98 [0.25, 1.65] & $-0.37$ (1 trade) \\
+    Surprise + Adaptive state & 0.95 [0.26, 1.61] & 0.75 [0.04, 1.44] & 0.74 [0.02, 1.44] & $-0.51$ (2 trades) \\
+    \midrule
+    \multicolumn{5}{l}{\emph{CPI, PCE and payrolls}} \\
+    Naive sign & 0.33 & 0.38 & 0.57 & $-0.65$ \\
+    Surprise only & 0.59 & 0.37 & 0.78 & $-0.22$ \\
+    Surprise + State filter & 0.65 & 0.37 & 0.81 & $-0.07$ \\
+    \midrule
+    CPI trades, naive / surprise only & 86 / 52 & 79 / 62 & 77 / 48 & 86 / 2 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Notes: Entry at $T+1$, exit at $T+30$; every slope, sign and state model re-estimated on
+    earlier releases only. Intervals from a three-month block bootstrap.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=\linewidth]{app_final_sharpe_4markets}
+  \caption{Final comparison of notebook 04: walk-forward net Sharpe ratio with 90\% bootstrap
+  intervals by strategy and release universe (CPI; CPI + PCE; CPI + PCE + NFP), 2019--2026.}
+  \label{fig:app_final}
+\end{figure}
+
+\FloatBarrier
+\subsection{Broad surprise book (notebook 05)}
+
+\paragraph{Which releases earn money? (notebook 05, section 9.2).} Table~\ref{tab:app_family} and
+Figure~\ref{fig:app_family} split the broad book's net P\&L (naive sizing, 2019--2026) by release
+family. CPI is the largest contributor in every equity index: $+4.3\%$ of notional in \ES, $+6.0\%$
+in \NQ\ and $+3.8\%$ in \YM. Behind it the ranking differs by market. In \ES\ the next contributors are
+JOLTS ($+3.0\%$), retail sales ($+2.3\%$) and the University of Michigan survey ($+1.4\%$); in \NQ\
+factory orders ($+4.6\%$), the University of Michigan survey ($+4.2\%$), retail sales ($+2.6\%$) and
+GDP ($+2.1\%$); in \YM\ ISM Manufacturing ($+3.3\%$), JOLTS ($+2.3\%$) and retail sales ($+1.7\%$).
+Payrolls, the release with the largest market impact, earns nothing or loses in all three ($-1.7\%$,
+$-0.5\%$ and $-0.1\%$), and ISM Services, the regional Fed surveys and pending home sales lose small
+amounts. No major family is individually significant: the $t$-statistics of the main families are at
+most 1.9 with naive sizing, and CPI with volatility sizing reaches 2.0 in \ES\ and 1.9 in \NQ. The broad book
+therefore works through diversification across many small edges rather than through one release.
+In \ZN\ every family with more than a handful of trades loses, led by payrolls ($-4.9\%$), retail
+sales ($-4.5\%$) and CPI ($-3.0\%$): its hit rates of 22--47\% reflect a drift smaller than the cost.
+
+\begin{table}[!htb]
+  \centering\small
+  \caption{Net P\&L of the broad surprise book by release family, 2019--2026: total net return
+  (\% of notional) and $t$-statistic of the mean trade, naive sizing.}\label{tab:app_family}
+  \begin{threeparttable}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{lcclcclcc}
+    \toprule
+    \multicolumn{3}{c}{\ES} & \multicolumn{3}{c}{\NQ} & \multicolumn{3}{c}{\YM} \\
+    \cmidrule(lr){1-3}\cmidrule(lr){4-6}\cmidrule(lr){7-9}
+    Family & Total & $t$ & Family & Total & $t$ & Family & Total & $t$ \\
+    \midrule
+    CPI & 4.3\% & 1.40 & CPI & 6.0\% & 1.50 & CPI & 3.8\% & 1.48 \\
+    JOLTS & 3.0\% & 1.56 & Factory Orders & 4.6\% & 1.89 & ISM Manuf. & 3.3\% & 1.02 \\
+    Retail Sales & 2.3\% & 1.12 & U.\ of Michigan & 4.2\% & 1.45 & JOLTS & 2.3\% & 1.19 \\
+    U.\ of Michigan & 1.4\% & 0.67 & Retail Sales & 2.6\% & 1.13 & Retail Sales & 1.7\% & 1.01 \\
+    Adv.\ Goods Trade & 1.3\% & 1.13 & GDP & 2.1\% & 1.55 & Trade Balance & 1.2\% & 0.88 \\
+    \midrule
+    ISM Services & $-1.5\%$ & $-0.49$ & ISM Services & $-1.3\%$ & $-0.32$ & Wholesale Trade & $-1.6\%$ & $-2.40$ \\
+    Payrolls (NFP) & $-1.7\%$ & $-0.60$ & Richmond Fed & $-1.9\%$ & $-1.02$ & Wholesale Inv. & $-2.7\%$ & $-1.68$ \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Notes: Top five contributors and the two largest losers in each market. Payrolls: $-0.5\%$
+    in \NQ\ and $-0.1\%$ in \YM. In \ZN\ every family with more than a few trades loses.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=\linewidth]{app_fig26_family_contribution_3markets}\\[4pt]
+  \includegraphics[width=0.42\linewidth]{app_nb05b_YM_family_contribution}
+  \caption{Total net P\&L of the broad surprise book by release family, 2019--2026: \ES, \NQ\ and
+  \ZN\ (top) and \YM\ (bottom).}
+  \label{fig:app_family}
+\end{figure}
+
+\paragraph{CPI only against CPI plus other surprises (notebook 05, section 10).}
+Figure~\ref{fig:app_nb05_final} and Table~\ref{tab:app_nb05_final} compare the CPI-only books (blue)
+with the books that add the other screened releases (orange and green), against the DTW book from
+the team's original slide (gray; \ES, 2018--2026, used as a fixed reference in every panel). The
+trade-off is the same in every equity index. The CPI books earn the most per trade (5--16 bps net)
+but trade only about 11 times a year. Adding the other releases raises the count to about 95 a year
+at about 2 bps per trade, and the simple naive sign rule is then the best broad book (0.65 in \ES,
+0.71 in \NQ, 0.68 in \YM), close to the CPI books' Sharpe ratio with far more trades, and it keeps the
+highest Sharpe ratio without 2022 (0.28--0.44). The fitted surprise model and volatility scaling
+help on CPI but not on the broad book, where scaling mainly adds drawdown ($-12$ to $-14\%$).
+Trading a second 30-minute window doubles the trades and removes the edge. In \ZN\ every book
+loses, and the fitted models almost never trade.
+
+\begin{table}[!htb]
+  \centering\small
+  \caption{CPI only against CPI plus other surprises: net Sharpe ratio (trades per year),
+  2019--2026, 2 ticks + \$4.50.}\label{tab:app_nb05_final}
+  \begin{threeparttable}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{lcccc}
+    \toprule
+    Book & \ES & \NQ & \YM & \ZN \\
+    \midrule
+    CPI $\cdot$ naive & 0.51 (12) & 0.54 (12) & 0.54 (11) & $-0.67$ (12) \\
+    CPI $\cdot$ surprise model & 0.76 (9) & 0.55 (11) & 0.45 (9) & $-0.37$ (0) \\
+    CPI $\cdot$ signal $\times$ vol & 0.77 (12) & 0.74 (12) & 0.61 (11) & $-0.29$ (12) \\
+    \midrule
+    All $\cdot$ naive & 0.65 (98) & 0.71 (97) & 0.68 (93) & $-2.42$ (82) \\
+    All $\cdot$ surprise model & 0.11 (43) & 0.37 (66) & 0.34 (57) & $-0.74$ (2) \\
+    All $\cdot$ signal $\times$ vol & 0.56 (101) & 0.37 (100) & 0.29 (96) & $-1.11$ (84) \\
+    Combined (CPI model + others $\times$ vol) & 0.40 (98) & 0.23 (101) & 0.16 (95) & $-1.25$ (72) \\
+    All $\cdot$ signal $\times$ vol $\cdot$ 2 windows & 0.16 (201) & 0.00 (199) & $-0.12$ (193) & $-2.02$ (168) \\
+    \midrule
+    All $\cdot$ naive, Sharpe without 2022 & 0.28 & 0.44 & 0.40 & $-2.53$ \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Notes: CPI books use the average of all CPI lines as the signal, so the naive CPI rule
+    differs from the headline-only rule of notebook 04. ``All'' is the ten screened families plus CPI.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.85\linewidth]{app_nb05_final_comparison_4markets}
+  \caption{CPI only (blue) against CPI plus other surprises (orange: ten screened families; green:
+  CPI model plus volatility-scaled others; purple: two windows) and the DTW peer reference (gray):
+  trades per year, net Sharpe ratio and net bps per trade, 2019--2026.}
+  \label{fig:app_nb05_final}
+\end{figure}
+
+\FloatBarrier
+\subsection{Surprise and DTW (notebook 06)}
+
+\paragraph{Cumulative P\&L (notebook 06, section 7.3).} Figure~\ref{fig:app_nb06_cum} and
+Table~\ref{tab:app_nb06} compare four single-window books on the same releases, walk-forward over
+2019--2026 at our base cost: the surprise alone, the DTW direction alone, the surprise kept only when
+DTW agrees, and a blend of the two signals. On the broad set of releases the surprise alone is the
+best book in \ES\ (0.65) and \NQ\ (0.71); the DTW-only book loses in \ES\ and is flat in \NQ, and
+requiring agreement removes about half the trades without raising the Sharpe ratio. \YM\ is the
+exception: there DTW alone earns 0.47 and the blend 1.06, with a third of the drawdown, but the
+bootstrap probability that the blend is not better than the surprise alone is 6\%, and the same
+combination does not help in \ES\ or \NQ\ (Section~\ref{sec:results}). On CPI alone the four books are
+close, and most of their cumulative P\&L comes from 2022. In \ZN\ every book loses; the
+surprise book loses most because it trades every release and pays a full tick each time.
+
+\begin{table}[!htb]
+  \centering\small
+  \caption{Surprise, DTW and combined single-window books: net Sharpe ratio, 2019--2026, 2 ticks +
+  \$4.50.}\label{tab:app_nb06}
+  \begin{tabular}{lcccc}
+    \toprule
+    Book & \ES & \NQ & \YM & \ZN \\
+    \midrule
+    \multicolumn{5}{l}{\emph{All screened releases}} \\
+    Surprise only & 0.65 & 0.71 & 0.68 & $-2.42$ \\
+    DTW only & $-0.39$ & 0.08 & 0.47 & $-1.25$ \\
+    Surprise + DTW agree & 0.31 & 0.62 & 0.94 & $-1.57$ \\
+    Surprise + DTW blend & 0.41 & 0.67 & 1.06 & $-1.51$ \\
+    \midrule
+    \multicolumn{5}{l}{\emph{CPI only}} \\
+    Surprise only & 0.76 & 0.55 & 0.45 & $-0.37$ \\
+    DTW only & 0.32 & 0.81 & 0.41 & $-0.55$ \\
+    Surprise + DTW agree & 0.93 & 0.54 & 0.32 & -- \\
+    Surprise + DTW blend & 0.69 & 0.72 & 0.51 & $-0.59$ \\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip\footnotesize ``--'': no trades. The \ZN\ CPI surprise book trades once.
+\end{table}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.82\linewidth]{app_nb06_cumulative_4markets}
+  \caption{Cumulative net P\&L of the surprise-only, DTW-only, surprise + DTW agree and surprise + DTW
+  blend books on all screened releases (left) and on CPI (right), 2019--2026.}
+  \label{fig:app_nb06_cum}
+\end{figure}
+
+\paragraph{The ladder: can we reach about 185 trades a year? (notebook 06, section 10).} The
+peer DTW strategy trades about 185 times a year on \ES\ because it takes five consecutive
+30-minute trades after each release; our books take one trade per release, which caps them at about
+100 trades a year. To answer the supervisor's question directly---if we trade five windows after
+each release, how many trades do we get, and what happens to the Sharpe ratio?---notebook 06 copies
+the ladder structure onto the same releases as the broad surprise book (Table~\ref{tab:app_ladder_design}).
+The design was fixed before running. In window $k$ the DTW path is the 31 minutes ending at that
+window's entry, matched against earlier releases at the same clock time, and the neighbours'
+window-$k$ returns are the forecast; neighbours must have finished window $k$ before the current
+release, and the gate is computed separately for each window. The surprise rule holds the sign of
+the release's surprise in each window. Every window pays the same round-trip cost. Three books are
+compared: a DTW ladder (DTW in all five windows, closest to the peer), a surprise ladder (the surprise
+in all five), and the surprise in the first window followed by DTW in windows 2--5. Because the
+surprise's effect was already gone in the second window and DTW showed no direction in the first,
+we expected the trade count to reach the peer's level while the Sharpe ratio fell toward zero.
+
+\begin{table}[!htb]
+  \centering\small
+  \caption{Ladder design: five back-to-back windows per release.}\label{tab:app_ladder_design}
+  \begin{tabular}{ccc}
+    \toprule
+    Window & Entry $\to$ exit (bars after the release) & Clock time for an 08:30 release \\
+    \midrule
+    1 & close of bar $T$ $\to$ $T+29$ & 08:31 $\to$ 09:00 \\
+    2 & $T+29 \to T+59$ & 09:00 $\to$ 09:30 \\
+    3 & $T+59 \to T+89$ & 09:30 $\to$ 10:00 \\
+    4 & $T+89 \to T+119$ & 10:00 $\to$ 10:30 \\
+    5 & $T+119 \to T+149$ & 10:30 $\to$ 11:00 \\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip\footnotesize Later windows of an 08:30 release can overlap the first window of a
+  10:00 release on the same day; each window is a separate one-contract trade, as in the peer strategy.
+\end{table}
+
+The expectation held (Table~\ref{tab:app_ladder_books}, Figure~\ref{fig:app_ladder}). The ladders
+reach 300--490 trades a year, well above the peer's 185, but every one earns less than the single
+first-window surprise book, and in \ES\ and \ZN\ all of them lose heavily (\ES: $-1.23$, $-1.00$ and
+$-0.75$). In \NQ\ the surprise in the first window followed by DTW keeps 0.27, and in \YM\ it is flat.
+The extra trades also lower the hit rate below 50\% in \ES\ and \ZN, turn the net return per
+trade negative, and raise the maximum drawdown from about $-5\%$ to between $-10\%$ and $-51\%$ in the
+equity indices; none of the ladder directions beats random signs at 5\%. More trades per release add
+cost, not information. The peer's 185 trades a year with a Sharpe ratio of 0.61 come from its own
+release set and setting; on our releases, copying its structure does not reproduce its result.
+
+\begin{table}[!htb]
+  \centering\footnotesize
+  \caption{Ladder books: trade count against Sharpe ratio (notebook 06, section 10.4), 2019--2026,
+  2 ticks + \$4.50.}\label{tab:app_ladder_books}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{llcccccccc}
+    \toprule
+    & Book & Trades/yr & Hit & bps/trade & Total & Sharpe & Ex-2022 & Max DD & $p$ (random) \\
+    \midrule
+    \ES & Surprise, window 1 only & 98 & 51\% & 1.74 & 12.8\% & 0.65 & 0.28 & $-4.8$\% & 0.00 \\
+     & DTW ladder & 314 & 46\% & $-2.06$ & $-48.4$\% & $-1.23$ & $-1.09$ & $-51.2$\% & 0.80 \\
+     & Surprise ladder & 490 & 46\% & $-1.15$ & $-42.4$\% & $-1.00$ & $-1.08$ & $-45.6$\% & 0.34 \\
+     & Surprise W1 + DTW W2--5 & 348 & 47\% & $-1.10$ & $-28.6$\% & $-0.75$ & $-0.80$ & $-30.1$\% & 0.27 \\
+    \midrule
+    \NQ & Surprise, window 1 only & 97 & 53\% & 2.41 & 17.5\% & 0.71 & 0.44 & $-5.7$\% & 0.00 \\
+     & DTW ladder & 309 & 50\% & $-0.13$ & $-2.9$\% & $-0.07$ & $-0.17$ & $-24.2$\% & 0.28 \\
+     & Surprise ladder & 484 & 50\% & $-0.39$ & $-14.3$\% & $-0.29$ & $-0.21$ & $-23.6$\% & 0.43 \\
+     & Surprise W1 + DTW W2--5 & 342 & 51\% & 0.50 & 12.9\% & 0.27 & $-0.04$ & $-15.6$\% & 0.06 \\
+    \midrule
+    \YM & Surprise, window 1 only & 93 & 53\% & 1.73 & 12.0\% & 0.68 & 0.40 & $-4.5$\% & 0.01 \\
+     & DTW ladder & 298 & 50\% & $-0.28$ & $-6.1$\% & $-0.23$ & $-0.14$ & $-12.4$\% & 0.18 \\
+     & Surprise ladder & 463 & 50\% & $-0.41$ & $-14.2$\% & $-0.34$ & $-0.44$ & $-17.3$\% & 0.15 \\
+     & Surprise W1 + DTW W2--5 & 329 & 50\% & 0.00 & 0.1\% & 0.00 & $-0.14$ & $-10.2$\% & 0.06 \\
+    \midrule
+    \ZN & Surprise, window 1 only & 82 & 36\% & $-3.35$ & $-20.5$\% & $-2.42$ & $-2.53$ & $-20.6$\% & 0.81 \\
+     & DTW ladder & 267 & 32\% & $-2.70$ & $-54.1$\% & $-3.92$ & $-4.59$ & $-54.2$\% & 0.10 \\
+     & Surprise ladder & 410 & 30\% & $-3.13$ & $-96.1$\% & $-7.65$ & $-8.32$ & $-96.1$\% & 1.00 \\
+     & Surprise W1 + DTW W2--5 & 294 & 32\% & $-2.98$ & $-65.7$\% & $-5.35$ & $-6.27$ & $-65.6$\% & 0.89 \\
+    \midrule
+    & Peer: DTW ladder (slide, \ES, 2018--2026) & 185 & -- & 1.18 & 18.6\% & 0.61 & -- & $-4.9$\% & -- \\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip\footnotesize Net bps per trade; total net return in \% of notional; $p$: share of
+  random-sign books with a Sharpe ratio at least as high.
+\end{table}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=\linewidth]{app_ladder_cumulative_4markets}
+  \caption{Cumulative net P\&L of the five-window ladders (surprise, DTW, and surprise in the first
+  window with DTW afterwards) against the single first-window surprise book, 2019--2026.}
+  \label{fig:app_ladder}
+\end{figure}
+
+\paragraph{Results by window (notebook 06, section 10.3).} Table~\ref{tab:app_ladder_window} scores
+each window on its own. The surprise has information only in the first window: its rank correlation
+with the next 30-minute return is 0.14 in \ES, 0.09 in \NQ\ and \YM, and then falls to between $-0.06$
+and $+0.05$ in windows 2--5, where every surprise window loses. DTW has no consistent information in
+any window in \ES\ and \NQ\ (rank correlations of $-0.05$ to $+0.03$); in \YM\ its first window has a
+rank correlation of 0.07 and a Sharpe ratio of 0.47, and the later windows fade. In \ZN\ every
+window loses under both rules. The per-window Sharpe ratios are shown in Figure~\ref{fig:ladder} of
+the main text.
+
+\begin{table}[!htb]
+  \centering\small
+  \caption{Each ladder window on its own: rank correlation with the next 30-minute return and net
+  Sharpe ratio, 2019--2026.}\label{tab:app_ladder_window}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{llccccc}
+    \toprule
+    Market & Rule & Window 1 & Window 2 & Window 3 & Window 4 & Window 5 \\
+    \midrule
+    \ES & Surprise & 0.14 / 0.65 & 0.01 / $-0.79$ & $-0.06$ / $-0.57$ & 0.00 / $-0.57$ & 0.01 / $-1.16$ \\
+        & DTW & 0.01 / $-0.39$ & $-0.02$ / $-0.96$ & 0.01 / $-0.38$ & 0.03 / $-0.22$ & $-0.05$ / $-1.29$ \\
+    \NQ & Surprise & 0.09 / 0.71 & $-0.01$ / $-0.23$ & $-0.06$ / $-0.50$ & 0.02 / 0.23 & $-0.04$ / $-0.96$ \\
+        & DTW & 0.03 / 0.08 & $-0.01$ / 0.01 & $-0.01$ / $-0.23$ & 0.02 / 0.15 & $-0.01$ / $-0.18$ \\
+    \YM & Surprise & 0.09 / 0.68 & 0.05 / $-0.15$ & 0.02 / $-0.18$ & $-0.06$ / $-0.80$ & 0.04 / $-0.30$ \\
+        & DTW & 0.07 / 0.47 & 0.03 / $-0.19$ & 0.05 / 0.15 & 0.01 / 0.03 & $-0.06$ / $-1.03$ \\
+    \ZN & Surprise & $-0.03$ / $-2.42$ & $-0.01$ / $-3.08$ & 0.01 / $-3.15$ & $-0.04$ / $-3.90$ & 0.04 / $-3.56$ \\
+        & DTW & 0.04 / $-1.25$ & $-0.02$ / $-1.94$ & $-0.02$ / $-2.34$ & 0.01 / $-1.62$ & $-0.01$ / $-2.92$ \\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip\footnotesize Each cell: rank correlation / net Sharpe ratio.
+\end{table}
+
+\FloatBarrier
+\subsection{Multi-market surprise book (notebook 07)}
+
+\paragraph{Performance by market (notebook 07, section 5).} Figure~\ref{fig:app_perf_market} and
+Table~\ref{tab:app_perf_market} run the same five books, with the same code and constants, on each
+market. The pattern is the same in the three equity indices and opposite in \ZN. The broad naive
+surprise book earns 0.65 in \ES, 0.71 in \NQ\ and 0.68 in \YM, with random-sign $p$-values of 0.006 or
+below; the CPI model 0.45--0.76; and keeping CPI trades only when DTW agrees 0.32--0.93, on six or
+seven trades a year. The DTW-only book loses in \ES, is flat in \NQ\ and earns 0.47 in \YM. Gross
+against net Sharpe ratios show what costs take: about 0.5 in \ES, 0.2 in \NQ\ and 0.3 in \YM\ for the
+broad book, but 2.1 in \ZN, where the naive book goes from $-0.30$ before costs to $-2.42$ after them. Over the
+cost grid the broad book's Sharpe ratio falls from 1.09 to 0.20 in \ES\ as slippage rises from zero
+to four ticks, but only from 0.82 to 0.60 in \NQ\ and from 0.91 to 0.45 in \YM, because the \NQ\ and
+\YM\ ticks are smaller relative to their moves.
+
+\begin{table}[!htb]
+  \centering\small
+  \caption{Performance by market, 2019--2026, 2 ticks + \$4.50: net Sharpe ratio (gross in
+  parentheses) and trades per year.}\label{tab:app_perf_market}
+  \begin{threeparttable}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{lcccc}
+    \toprule
+    Book & \ES & \NQ & \YM & \ZN \\
+    \midrule
+    All $\cdot$ naive & 0.65 (1.17) & 0.71 (0.87) & 0.68 (1.01) & $-2.42$ ($-0.30$) \\
+    \quad trades / yr; $p$ (random sign) & 98; 0.000 & 97; 0.005 & 93; 0.006 & 82; 0.81 \\
+    All $\cdot$ DTW only & $-0.39$ ($-0.01$) & 0.08 (0.21) & 0.47 (0.79) & $-1.25$ (0.47) \\
+    All $\cdot$ surprise + DTW agree & 0.31 (0.70) & 0.62 (0.73) & 0.94 (1.21) & $-1.57$ ($-0.12$) \\
+    CPI $\cdot$ surprise model & 0.76 (0.88) & 0.55 (0.60) & 0.45 (0.53) & $-0.37$ (1 trade) \\
+    CPI $\cdot$ surprise + DTW agree & 0.93 (1.02) & 0.54 (0.57) & 0.32 (0.38) & -- \\
+    \midrule
+    All $\cdot$ naive, Sharpe without 2022 & 0.28 & 0.44 & 0.40 & $-2.53$ \\
+    \midrule
+    \multicolumn{5}{l}{\emph{All $\cdot$ naive, net Sharpe by round-trip slippage (plus \$4.50)}} \\
+    0 ticks & 1.09 & 0.82 & 0.91 & $-0.56$ \\
+    1 tick  & 0.87 & 0.77 & 0.80 & $-1.49$ \\
+    2 ticks & 0.65 & 0.71 & 0.68 & $-2.42$ \\
+    4 ticks & 0.20 & 0.60 & 0.45 & $-4.24$ \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Notes: Monthly Sharpe ratios; ``--'': no trades. The \ZN\ CPI model trades about once over
+    the sample, because its predicted drift rarely exceeds the cost.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.85\linewidth]{app_nb07b_sharpe_by_market}
+  \caption{Net Sharpe ratio by market and strategy, 2019--2026, 2 ticks + \$4.50 (notebook 07,
+  section 5).}
+  \label{fig:app_perf_market}
+\end{figure}
+
+\paragraph{Portfolios: all markets, equities and \ES\ + \NQ\ (notebook 07, sections 5--6).}
+Table~\ref{tab:app_portfolios07} and Figure~\ref{fig:app_multi} combine the per-market books with
+equal-risk weights fixed on 2016--2018 (\ES\ 1.00, \NQ\ 0.71, \YM\ 1.02, \ZN\ 2.67). Adding \YM\ to \ES\ and
+\NQ\ improves the multi-release equity book: the Sharpe ratio rises from 0.72 to 0.78, total net P\&L
+from 25\% to 38\%, trades from 195 to 288 a year, and the 90\% confidence interval moves fully above
+zero (0.10 to 1.50). The Sharpe ratio without 2022 also rises (0.38 to 0.43). The cost is a larger
+drawdown ($-9.2\%$ against $-7.4\%$), because the book is bigger. \YM\ helps because its monthly
+returns correlate only 0.66 with \ES's and 0.43 with \NQ's. For the CPI-only model \YM\ adds little
+(0.69 to 0.63), because the CPI books of the three indices are highly correlated. \ZN\ breaks every
+portfolio it enters: equal-risk weighting gives it the largest weight (2.67, because its moves are
+small), its multi-release book loses ($-2.42$), and the four-market naive book is negative ($-0.34$,
+drawdown $-23\%$). \ZN\ should therefore be excluded from the traded book. The four-market CPI
+portfolio still earns 0.61 because the CPI model almost never trades \ZN.
+
+\begin{table}[!htb]
+  \centering\small
+  \caption{Equal-risk surprise portfolios across markets, 2019--2026, 2 ticks + \$4.50 (weights fixed
+  on 2016--2018: \ES\ 1.00, \NQ\ 0.71, \YM\ 1.02, \ZN\ 2.67).}\label{tab:app_portfolios07}
+  \setlength{\tabcolsep}{3pt}
+  \begin{tabular}{lccccccc}
+    \toprule
+    Portfolio & Trades/yr & Sharpe & 90\% CI & Ex-2022 & Total & Max DD & $p$ (random) \\
+    \midrule
+    \ES+\NQ, all $\cdot$ naive & 195 & 0.72 & [$-0.01$, 1.43] & 0.38 & 25.2\% & $-7.4\%$ & 0.000 \\
+    \textbf{Equities (\ES+\NQ+\YM), all $\cdot$ naive} & \textbf{288} & \textbf{0.78} & \textbf{[0.10, 1.50]} & \textbf{0.43} & \textbf{37.5\%} & $-9.2\%$ & \textbf{0.000} \\
+    \ES+\NQ, CPI model & 20 & 0.69 & [$-0.01$, 1.39] & 0.02 & 9.9\% & $-3.3\%$ & 0.023 \\
+    Equities (\ES+\NQ+\YM), CPI model & 29 & 0.63 & [$-0.10$, 1.37] & $-0.04$ & 13.0\% & $-5.3\%$ & 0.020 \\
+    All four markets, all $\cdot$ naive & 370 & $-0.34$ & [$-1.08$, 0.40] & $-0.74$ & $-17.4\%$ & $-23.4\%$ & 0.000 \\
+    All four markets, CPI model & 29 & 0.61 & [$-0.13$, 1.35] & $-0.07$ & 12.6\% & $-5.8\%$ & 0.018 \\
+    \midrule
+    All four markets, DTW only & 244 & $-0.64$ & [$-1.28$, $-0.01$] & $-0.62$ & $-23.7\%$ & $-29.1\%$ & 0.028 \\
+    All four markets, surprise + DTW agree & 195 & $-0.07$ & [$-0.74$, 0.61] & $-0.29$ & $-2.6\%$ & $-15.6\%$ & 0.001 \\
+    All four markets, CPI + DTW agree & 19 & 0.67 & [$-0.01$, 1.31] & $-0.01$ & 11.9\% & $-3.4\%$ & 0.010 \\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip\footnotesize Total net return in \% of \ES-equivalent notional. For the four-market
+  naive book, the random-sign $p$ of 0.000 says its direction is better than random; the loss comes
+  from \ZN's costs, which random-sign books pay too.
+\end{table}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.8\linewidth]{app_nb07b_portfolio_cumulative}
+  \caption{Cumulative net P\&L of the risk-weighted surprise books (broad naive book) by market and
+  of the two-, three- and four-market portfolios, 2019--2026.}
+  \label{fig:app_multi}
+\end{figure}
+
+\paragraph{Final comparison (notebook 07, section 7).} Table~\ref{tab:app_final07} brings every
+market and portfolio book of notebook 07 together. It summarizes the notebook's conclusion: the
+consensus surprise is the source of direction in all three equity indices, the broad naive book is
+the most robust single book (positive without 2022 and significant against random signs in each
+index), the three-index portfolio is the best overall, and \ZN\ should not be traded at these costs.
+
+\begin{table}[!htb]
+  \centering\footnotesize
+  \caption{Final comparison of the multi-market surprise books, 2019--2026, 2 ticks + \$4.50
+  (notebook 07, section 7).}\label{tab:app_final07}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{lcccccc}
+    \toprule
+    Book & Trades/yr & bps/trade & Sharpe & Ex-2022 & Max DD & $p$ (random) \\
+    \midrule
+    \ES\ $\cdot$ CPI $\cdot$ surprise model & 9 & 8.23 & 0.76 & 0.05 & $-2.0\%$ & 0.006 \\
+    \ES\ $\cdot$ All $\cdot$ naive & 98 & 1.74 & 0.65 & 0.28 & $-4.8\%$ & 0.000 \\
+    \ES\ $\cdot$ All $\cdot$ surprise + DTW agree & 53 & 1.14 & 0.31 & 0.07 & $-4.6\%$ & 0.030 \\
+    \ES\ $\cdot$ All $\cdot$ DTW only & 65 & $-1.45$ & $-0.39$ & $-0.32$ & $-11.0\%$ & 0.479 \\
+    \midrule
+    \NQ\ $\cdot$ CPI $\cdot$ surprise model & 11 & 7.12 & 0.55 & $-0.01$ & $-2.7\%$ & 0.047 \\
+    \NQ\ $\cdot$ All $\cdot$ naive & 97 & 2.41 & 0.71 & 0.44 & $-5.7\%$ & 0.005 \\
+    \NQ\ $\cdot$ All $\cdot$ surprise + DTW agree & 51 & 3.11 & 0.62 & 0.59 & $-6.7\%$ & 0.021 \\
+    \NQ\ $\cdot$ All $\cdot$ DTW only & 63 & 0.34 & 0.08 & 0.17 & $-8.3\%$ & 0.271 \\
+    \midrule
+    \YM\ $\cdot$ CPI $\cdot$ surprise model & 9 & 4.67 & 0.45 & $-0.15$ & $-2.0\%$ & 0.060 \\
+    \YM\ $\cdot$ All $\cdot$ naive & 93 & 1.73 & 0.68 & 0.40 & $-4.5\%$ & 0.006 \\
+    \YM\ $\cdot$ All $\cdot$ surprise + DTW agree & 49 & 2.94 & 0.94 & 0.94 & $-1.7\%$ & 0.002 \\
+    \YM\ $\cdot$ All $\cdot$ DTW only & 61 & 1.27 & 0.47 & 0.58 & $-4.0\%$ & 0.024 \\
+    \midrule
+    \ZN\ $\cdot$ CPI $\cdot$ surprise model & 0 & $-17.03$ & $-0.37$ & $-0.39$ & $-0.2\%$ & 1.000 \\
+    \ZN\ $\cdot$ All $\cdot$ naive & 82 & $-3.35$ & $-2.42$ & $-2.53$ & $-20.6\%$ & 0.812 \\
+    \ZN\ $\cdot$ All $\cdot$ surprise + DTW agree & 42 & $-3.18$ & $-1.57$ & $-1.89$ & $-10.2\%$ & 0.645 \\
+    \ZN\ $\cdot$ All $\cdot$ DTW only & 55 & $-2.15$ & $-1.25$ & $-1.71$ & $-9.1\%$ & 0.164 \\
+    \midrule
+    2-market (\ES+\NQ) $\cdot$ All $\cdot$ naive & 195 & 1.73 & 0.72 & 0.38 & $-7.4\%$ & 0.000 \\
+    2-market (\ES+\NQ) $\cdot$ CPI $\cdot$ surprise model & 20 & 6.45 & 0.69 & 0.02 & $-3.3\%$ & 0.023 \\
+    \midrule
+    3-equity (\ES+\NQ+\YM) $\cdot$ All $\cdot$ naive & 288 & 1.74 & 0.78 & 0.43 & $-9.2\%$ & 0.000 \\
+    3-equity (\ES+\NQ+\YM) $\cdot$ CPI $\cdot$ surprise model & 29 & 5.94 & 0.63 & $-0.04$ & $-5.3\%$ & 0.020 \\
+    \midrule
+    4-market $\cdot$ CPI $\cdot$ surprise model & 29 & 5.71 & 0.61 & $-0.07$ & $-5.8\%$ & 0.018 \\
+    4-market $\cdot$ All $\cdot$ naive & 370 & $-0.63$ & $-0.34$ & $-0.74$ & $-23.4\%$ & 0.000 \\
+    4-market $\cdot$ All $\cdot$ DTW only & 244 & $-1.30$ & $-0.64$ & $-0.62$ & $-29.1\%$ & 0.028 \\
+    4-market $\cdot$ All $\cdot$ surprise + DTW agree & 195 & $-0.18$ & $-0.07$ & $-0.29$ & $-15.6\%$ & 0.001 \\
+    4-market $\cdot$ CPI $\cdot$ surprise + DTW agree & 19 & 8.17 & 0.67 & $-0.01$ & $-3.4\%$ & 0.010 \\
+    \bottomrule
+  \end{tabular}
+  \par\smallskip\footnotesize Net bps per trade; monthly Sharpe ratios; $p$: share of random-sign
+  books with a Sharpe ratio at least as high.
+\end{table}
+
+
+

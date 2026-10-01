@@ -1,0 +1,147 @@
+\section{Price Discovery After Scheduled Releases}\label{sec:discovery}
+
+This section asks how much of the response to a release arrives after the first minute and
+whether the surprise predicts it. We define, for a release at minute $T$ and horizon $h$, the
+reaction from the last pre-release price and the drift from the first post-release price,
+\begin{equation}\label{eq:decomp}
+  R_{T,h} = \ln P_{T+h-1} - \ln P_{T-1}, \qquad
+  D_{T,h} = \ln P_{T+h-1} - \ln P_{T},
+\end{equation}
+where $P_\tau$ is the close of the bar labelled $\tau$. The reaction is the sum of the first-minute
+jump $R_{T,1}$ and the drift, $R_{T,h}=R_{T,1}+D_{T,h}$. Only the drift can be traded.
+
+\subsection{The jump and the drift}
+
+Figure~\ref{fig:cpi_paths} shows the average cumulative return around CPI releases from 2016 to
+2026, separately for hot prints (headline surprise above $+0.5$ standard deviations, 38 releases)
+and cool prints (below $-0.5$, 36 releases). Three facts stand out. First, all four markets jump in
+the direction theory predicts within the first minute: after hot prints \ES\ falls about 37 bps,
+\NQ\ about 55 bps, \YM\ about 31 bps and \ZN\ about 19 bps; after cool prints they rise by about 30,
+42, 26 and 23 bps.
+Second, the equity indices keep moving in the same direction afterwards. After hot prints \ES\
+falls a further 15--18 bps, to about $-55$ bps 30 minutes after the release, and \NQ\ a further 20
+bps, to about $-77$ bps; \YM\ falls a further 17 bps, to about $-48$ bps. After cool prints the
+continuation is smaller, about 3--6 bps in the three equity indices. Third,
+\ZN\ continues by only 4--5 bps after hot prints and slightly reverses after cool prints. Before the
+release, all four markets are flat on average: there is no systematic pre-positioning in the 30
+minutes before CPI.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig02_cpi_event_paths_4m}
+  \caption{Average cumulative return around CPI releases, 2016--2026, relative to the last
+  pre-release price, for hot prints (headline surprise above $+0.5$ SD) and cool prints (below
+  $-0.5$ SD), \ES, \NQ, \YM\ and \ZN. Shaded: the window a strategy can trade (one to 30 minutes after the release).}
+  \label{fig:cpi_paths}
+\end{figure}
+
+\subsection{Surprises predict the reaction and the drift}
+
+For each release family we regress the reaction and the drift on the standardized surprise
+components with heteroskedasticity-robust (HC3) standard errors. Table~\ref{tab:eventstudy}
+reports the results for CPI, NFP and PCE. CPI is the release that matters in all four markets: its
+headline surprise explains 27--30\% of the five-minute reaction, with the expected sign. A
+one-standard-deviation hot surprise lowers \ES\ by 20.8 bps, \NQ\ by 27.7 bps and \ZN\ by 9.9 bps
+over five minutes. \NQ\ reacts about 35\% more than \ES, consistent with the higher rate
+sensitivity of long-duration technology stocks, and \YM\ about 8\% less (19.2 bps, $R^2$ 0.27), with
+the same drift as \ES\ after the first minute ($-5.3$ against $-5.7$ bps). NFP moves prices almost as much as CPI on average
+(30 bps in \ES), but in a direction the surprise hardly explains ($R^2$ of 1--3\%), because
+payrolls, the unemployment rate and wages often point in different directions.
+
+\begin{table}[htbp]
+  \centering\small
+  \caption{Response to CPI, NFP and PCE surprises, 2016--2026.}\label{tab:eventstudy}
+  \begin{threeparttable}
+  \begin{tabular}{llccccc}
+    \toprule
+    & & Mean $|R_{T,30}|$ & \multicolumn{2}{c}{5-minute reaction} & \multicolumn{2}{c}{Drift $T{+}1\to T{+}30$} \\
+    \cmidrule(lr){4-5}\cmidrule(lr){6-7}
+    Market & Release & (bps) & $\beta$ (bps/SD) & $R^2$ & $\beta$ (bps/SD) & $t$ \\
+    \midrule
+    \ES & CPI & 38.5 & $-20.8$ & 0.27 & $-5.7$  & $-1.4$ \\
+    \NQ & CPI & 53.6 & $-27.7$ & 0.30 & $-4.6$  & $-0.9$ \\
+    \ZN & CPI & 22.5 & $-9.9$  & 0.30 & $-0.06$ & $-0.04$ \\
+    \YM & CPI & 33.2 & $-19.2$ & 0.27 & $-5.3$  & $-1.4$ \\
+    \midrule
+    \ES & NFP & 29.6 & $+2.8$ & 0.03 & $+0.2$ & 0.1 \\
+    \NQ & NFP & 36.0 & $+2.5$ & 0.01 & $-0.6$ & $-0.4$ \\
+    \ZN & NFP & 23.6 & $-1.5$ & 0.03 & $+0.1$ & 0.1 \\
+    \YM & NFP & 27.9 & $+2.8$ & 0.07 & $+0.6$ & 0.4 \\
+    \midrule
+    \ES & PCE & 14.9 & $-3.8$ & 0.10 & $+0.4$ & 0.2 \\
+    \NQ & PCE & 18.5 & $-5.2$ & 0.10 & $+1.3$ & 0.5 \\
+    \ZN & PCE & 8.3  & $-0.9$ & 0.04 & $+0.5$ & 0.5 \\
+    \YM & PCE & 11.9 & $-2.9$ & 0.09 & $-0.6$ & $-0.4$ \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Notes: $\beta$ is the coefficient on the headline surprise in a regression of the
+    return on all surprise components of the release (CPI: headline and core; NFP: payrolls,
+    unemployment rate, average hourly earnings; PCE: headline and core), with HC3 standard errors.
+    122 CPI, 122 NFP and 119 PCE releases (348 with complete \YM\ prices).
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+The drift regressions are weaker: with about 120 CPI releases, the coefficient on the headline
+surprise alone is not individually significant in any market. The drift is better measured with
+the family signal in equation~\eqref{eq:x}, which combines all CPI lines. Its correlation with the
+five-minute reaction to CPI is 0.51--0.54 in all four markets, and the 30-minute drift per
+standard deviation of the signal is about 5.9 bps in \ES, 8.5 bps in \NQ, 4.4 bps in \YM\ and 0.8 bps in
+\ZN. Against a five-minute reaction of 27, 37, 22 and 14 bps per standard deviation, between a fifth
+and a quarter of the CPI response in the equity indices remains as a drift after the first minute,
+and almost none in \ZN.
+Figure~\ref{fig:reaction_drift} shows the same contrast. The trading tests in
+Section~\ref{sec:results}, which aggregate many releases with walk-forward signs, are the decisive
+evidence on whether this drift is predictable out of sample.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{nb02b_reaction_vs_drift_4markets}
+  \caption{$t$-statistics of the headline surprise (CPI, payrolls, PCE) in regressions of the
+  five-minute reaction from the pre-release price (left) and of the drift from one to 30 minutes
+  after the release (right), \ES, \NQ, \YM\ and \ZN, 2016--2026. Dashed lines: $\pm 2$.}
+  \label{fig:reaction_drift}
+\end{figure}
+
+\subsection{Does the pre-release market state matter?}
+
+\citet{Andersen2007} show that announcement effects depend on the state of the economy. We ask a
+related question at high frequency: does the same surprise move prices more when markets are
+already stressed? We pre-register six state variables measured before the release---20-day
+realized volatility, the previous day's intraday volatility, 20-day momentum, the distance from the
+60-day high, the overnight return and the previous surprise of the same release---each converted
+to a percentile against its trailing one-year distribution, and estimate
+\begin{equation}\label{eq:state}
+  r_T = a + b\,x_T + c\,s_T + d\,(x_T\times s_T) + \varepsilon_T ,
+\end{equation}
+where $s_T\in[0,1]$ is the state percentile, so $d$ is the change in the surprise beta from the
+calmest to the most stressed state. Each interaction is tested with HC3 and a 2,000-draw
+permutation test, corrected for the 48 primary tests with the false-discovery rate of
+\citet{Benjamini1995}, and required to have the same sign in 2016--2020 and 2021--2026.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig12_interaction_tstats_CPI_4markets}
+  \caption{$t$-statistics of the CPI $\times$ state interaction $d$ in equation~\eqref{eq:state},
+  by state variable (rows) and target (columns: reactions and drifts at 1--60 minutes), for \ES,
+  \NQ, \YM\ and \ZN.}
+  \label{fig:state}
+\end{figure}
+
+Figure~\ref{fig:state} summarizes the results. In \ES, CPI surprises hit much harder when recent
+volatility is high: the interaction with 20-day volatility has $t$-statistics of 2.9--3.8 on the
+reactions at every horizon, and the five-minute beta rises by about 61 bps from the calmest to the
+most volatile markets. \NQ\ shows the same pattern slightly weaker ($t$ of 2.2--3.0), and \YM\ almost exactly the same
+one: its five-minute CPI beta rises by 58.7 bps from calm to volatile states ($t=3.74$,
+permutation $p=0.004$), with the same sign in 2016--2020 and 2021--2026. Three features
+limit the economic value of this result. First, the effect is concentrated in the first-minute
+jump; on the tradeable drift the $t$-statistics fall to 1.1--2.1. Second, in walk-forward estimation
+the interaction was not detectable in real time before 2022: its training $t$-statistic was 0.5 in
+2019 and below 2 until 2022. Third, only two \ES\ tests and no \NQ\ test survive the false-discovery
+correction; in \YM\ three survive, CPI $\times$ volatility and two NFP $\times$ volatility effects
+that come entirely from 2016--2020. On the \YM\ drift the CPI interaction is $+24.6$ bps ($t=2.52$)
+but does not survive the correction. In \ZN\ there is no volatility pattern at all. The state variables do predict the size
+of the move robustly: in high-volatility states the absolute 30-minute move is about 20 bps larger
+in \ES, and 198 (\ES), 154 (\NQ) and 156 (\YM) of 360 magnitude tests survive the correction. We return to this
+distinction between direction and size in Section~\ref{sec:mechanisms}.

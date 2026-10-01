@@ -1,0 +1,111 @@
+\section{Institutional Setting and Data}\label{sec:data}
+
+\subsection{Scheduled releases and the consensus}
+
+The U.S.\ statistical agencies and private survey providers publish their main indicators on
+calendars fixed well in advance. Most price and labor-market data, including the Consumer Price
+Index (CPI) and the Employment Situation report (nonfarm payrolls, NFP), are released at 08:30
+Eastern Time; survey-based indicators such as the ISM indices and consumer confidence are released
+at 10:00; and FOMC rate decisions at 14:00. Before each release, Bloomberg surveys professional
+forecasters and publishes the median forecast, which we use as the market consensus. Because the
+consensus is fixed before the release and the actual figure is published at a known second, the
+difference between the two is news to the market at the moment of the release.
+
+\subsection{Futures data}
+
+We use one-minute OHLCV bars from Databento (CME Globex, \texttt{GLBX.MDP3}) for four contracts
+from July 2010 to June 2026: the E-mini S\&P 500 (\ES), E-mini Nasdaq-100 (\NQ) and E-mini Dow (\YM),
+rolled on the calendar, and the 10-year Treasury note future (\ZN), rolled on volume. Table~\ref{tab:contracts}
+summarizes the contract specifications. The markets differ in how they should react to the
+same news. \YM, the Dow, holds fewer technology and more industrial and financial stocks than
+\ES, and serves as a third equity market on which the \ES\ results can be checked. A hot inflation print raises the expected path of the policy rate, which lowers the
+present value of future earnings---more so for the long-duration technology stocks that dominate
+\NQ---and lowers Treasury prices. Strong payrolls raise expected growth, which is good for
+equities, but also expected rates, which is bad for bonds.
+
+\begin{table}[htbp]
+  \centering\small
+  \caption{Contract specifications and round-trip costs.}\label{tab:contracts}
+  \begin{threeparttable}
+  \begin{tabular}{lcccc}
+    \toprule
+    & \ES & \NQ & \YM & \ZN \\
+    \midrule
+    Underlying & S\&P 500 & Nasdaq-100 & Dow Jones Ind. & 10-year note \\
+    Exchange & CME & CME & CBOT & CBOT \\
+    Tick size & 0.25 points & 0.25 points & 1 point & 1/64 point \\
+    Value of one tick & \$12.50 & \$5.00 & \$5.00 & \$15.625 \\
+    Round-trip cost, 2 ticks + \$4.50 (bps) & $\approx 1.7$ & $\approx 0.7$ & $\approx 1.0$ & $\approx 3.0$ \\
+    Buy-and-hold Sharpe ratio, 2019--2026 & 0.90 & 0.99 & 0.78 & $-0.23$ \\
+    Buy-and-hold maximum drawdown, 2019--2026 & $-29.5\%$ & $-38.3\%$ & $-32.2\%$ & $-23.6\%$ \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Notes: The round-trip cost converts two ticks of slippage (one per side) plus a \$4.50
+    commission into basis points of the contract value at the pre-release price, averaged over
+    2019--2026.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+We keep sessions from 18:00 to 17:00 Eastern Time, dated by their close, and drop exchange
+holidays and sessions with too few bars. Minutes without a trade inside a kept session are filled
+with the last price. Kept sessions number 3,894 for \ES, 3,797 for \NQ, 3,754 for \YM\ and 3,916
+for \ZN; together the four markets contribute about 21 million one-minute bars. Returns across a change of contract are set to zero, which removes the
+calendar-spread jump at each quarterly roll and leaves returns within a contract unchanged. A
+one-minute bar is labelled by its start: the bar labelled 08:30 covers 08:30:00--08:30:59 and
+closes at 08:31. Figure~\ref{fig:markets} shows the four markets over the sample, which spans the
+low-inflation years before 2020, the COVID crash, the 2022 inflation shock with the fastest
+monetary tightening in four decades, and the disinflation that followed.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\linewidth]{fig01_markets_overview_4m}
+  \caption{\ES, \NQ, \YM\ and \ZN, 2010--2026. Roll-adjusted daily prices rebased to 100. Grey: the
+  2019--2026 evaluation period; red: the 2022 inflation shock.}
+  \label{fig:markets}
+\end{figure}
+
+\subsection{Measuring surprises}
+
+The Bloomberg calendar contains 179 U.S.\ release lines and 27,137 release rows between 2010 and
+2026, each with a release time, the actual value and the survey median. For line $l$ at release
+$t$, the raw surprise $A_{l,t}-F_{l,t}$ is not comparable across lines (payrolls are measured in
+thousands of jobs, CPI in tenths of a percent), so we standardize it causally, using only earlier
+releases of the same line:
+\begin{equation}\label{eq:z}
+  z_{l,t} = \frac{A_{l,t}-F_{l,t}}{\operatorname{sd}\left(A_{l,1}-F_{l,1},\ldots,A_{l,t-1}-F_{l,t-1}\right)},
+\end{equation}
+requiring at least 24 earlier releases and capping $z$ at $\pm 5$ (0.47\% of the 17,328
+standardized surprises are capped). Lines that are released at the same instant---for example the
+eight CPI lines---are grouped into a release family $f$ when their release timestamps overlap by at
+least 80\%. The family signal is
+\begin{equation}\label{eq:x}
+  x_{f,t} = \frac{1}{|L_f|}\sum_{l\in L_f} s_l\, z_{l,t},
+\end{equation}
+where the sign $s_l\in\{-1,+1\}$ is the sign of the slope of a regression of the first-minute
+return on $z_{l,t}$, estimated separately for each market on earlier years only. With these signs,
+$x_{f,t}>0$ always means good news for the market in question: a strong payrolls print is good
+news for \ES\ and bad news for \ZN.
+
+\subsection{Sample}
+
+The event-study sample (Section~\ref{sec:discovery}) contains 363 CPI, NFP and PCE releases from
+2016 to 2026. The trading samples use all release families with at least 30 releases (75 families
+built from 143 lines). All strategies use the sample split in Table~\ref{tab:split}; the first
+three years only build the history that later estimates require.
+
+\begin{table}[htbp]
+  \centering\small
+  \caption{Sample split.}\label{tab:split}
+  \begin{tabular}{lll}
+    \toprule
+    Period & Years & Use \\
+    \midrule
+    Burn-in    & 2010--2012 & analogue library and surprise history only \\
+    Train      & 2013--2017 & first estimation window \\
+    Validation & 2018--2020 & out of sample (walk-forward) \\
+    Test       & 2021--2026 & out of sample, reported once \\
+    \bottomrule
+  \end{tabular}
+\end{table}

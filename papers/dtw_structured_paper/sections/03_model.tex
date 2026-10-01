@@ -1,0 +1,93 @@
+\papersection{Model}{sec:model}
+
+The model decides which releases to trade (\ref{sec:universe}), turns the price path at entry into a
+forecast (\ref{sec:signal}) and turns the forecast into positions (\ref{sec:strategy}). Nothing in it
+uses data at or after the entry minute.
+
+\subsection{Event Universe Construction}\label{sec:universe}
+
+Release lines that share at least 80\% of their timestamps are grouped into one \emph{family}, so
+each report (CPI, the Employment Situation) is one event. A family is admitted for asset $a$ in year
+$y$ if it moves the market more than other releases at the same clock slot. With
+$m_T=|p_{T+30}-p_T|$ the absolute 30-minute move after minute $T$,
+\begin{equation}\label{eq:impact}
+  I_{f,a,y}=\overline{m}_{T\in\mathcal{R}_f}\big/\,\overline{m}_{T\in\mathcal{C}_f},
+\end{equation}
+where $\mathcal{R}_f$ are the family's earlier releases and $\mathcal{C}_f$ the same clock slot on
+days when another family releases there but $f$ does not. A family needs 30 earlier releases and a
+Welch $t$-statistic of at least 2 on the log moves; the screen is redone each year from earlier years
+only. On \ES\ it admits eight families (payrolls, CPI, ISM Manufacturing and Services, FOMC Minutes,
+Retail Sales, Core PCE, Wholesale Inventories). The FOMC decision fails, because at 14:00 its only
+control is the Minutes. Each admitted release is traded in five windows; one (asset, release,
+window) is a \emph{game}.
+
+\subsection{Signal}\label{sec:signal}
+
+For game $e$ with entry minute $\tau_e$, the path is the 31 log prices ending at entry, standardized,
+\begin{equation}\label{eq:path}
+  q_{e,i}=(p_{\tau_e-31+i}-\bar p_e)/s_e,\qquad i=1,\ldots,31,
+\end{equation}
+so DTW compares the shape of the reaction, not its size; the target is the next 30-minute return
+$y_e$. Candidates are earlier games on the same asset, clock slot and window, from any family, that
+exited before $e$ entered, within three years and at most the 600 most recent (at least 20 are
+required). The DTW distance $d_j$ to each candidate uses squared local costs and a Sakoe--Chiba band of
+five minutes \citep{Keogh2005}. The $K=15$ nearest neighbours $\mathcal{K}_e$ are weighted by
+similarity and age $\alpha_j$ (days), $\omega_j\propto d_j^{-1}e^{-\alpha_j/730}$, and give two
+features:
+\begin{equation}\label{eq:features}
+  \mu_e=\sum_{j\in\mathcal{K}_e}\omega_j y_j,\qquad
+  \sigma_e=\Big(\sum_{j\in\mathcal{K}_e}\omega_j (y_j-\mu_e)^2\Big)^{1/2}.
+\end{equation}
+The mean $\mu_e$ forecasts the direction of the next move; the dispersion $\sigma_e$ measures how much
+the analogues disagreed, and forecasts the move's size (\ref{sec:signalquality}). The setting was
+chosen on \ES\ in an earlier version of the model and is used unchanged for the other assets.
+
+\subsection{Model}\label{sec:strategy}
+
+\subsubsection{How do we turn this signal into a strategy}
+
+The position in game $e$ is a direction, a gate and a size,
+$w_e=\operatorname{sign}(\mu_e)\,G_e\,S_e$, held for 30 minutes from the close of the entry minute.
+Games of different families at the same minute are merged into one position. With $n$ ticks of
+slippage per side, tick $\delta$ and entry price $P_e$, the net return in bps is
+\begin{equation}\label{eq:cost}
+  r_e=w_e y_e-|w_e|\cdot 2n\,\delta/P_e\times 10^4 ,\qquad n\in\{0,\tfrac14,\tfrac12\}.
+\end{equation}
+
+\subsubsection{Why 5 windows?}\label{sec:five}
+
+Each release is traded in five back-to-back 30-minute windows entering at $T+a_k$,
+$a_k\in\{1,31,61,91,121\}$ (Figure~\ref{fig:ladder}). The reaction to a large release lasts more
+than 30 minutes; one window gives too few trades to measure a small edge (five give about 225 a year
+in \ES); and the windows test where the information is: if the path carries news, the first window
+should be best (\ref{sec:hitrate}). No window enters at $T$, whose price predates the release.
+
+\begin{figure}[!tb]
+  \centering
+  \includegraphics[width=0.48\linewidth]{event_ladder}
+  \caption{The anchor ladder: five 30-minute windows after a release at $T$. Each window's path is
+  the 31 minutes ending at its entry.}
+  \label{fig:ladder}
+\end{figure}
+
+\subsubsection{Gating}\label{sec:gating}
+
+The forecast is noisy near zero, so the book trades only its tails,
+\begin{equation}\label{eq:gate}
+  G_e=\mathbf{1}\{\mu_e\le Q_{0.3}\ \text{or}\ \mu_e\ge Q_{0.7}\},
+\end{equation}
+with quantiles fixed on the asset's 2013--2020 games: the outer 60\% of forecasts are traded.
+
+\subsubsection{Weighting}
+
+Trades are sized inversely to the dispersion, $S_e=\min(\tilde\sigma/\sigma_e,\,2)$, with
+$\tilde\sigma$ its median in the fitting years: consistent analogues trade up to two contracts,
+scattered ones less than one. Assets are combined with inverse-volatility weights reset monthly,
+\begin{equation}\label{eq:assetweights}
+  R_t=\sum_a\lambda_{a,t}R_{a,t},\qquad
+  \lambda_{a,t}\propto G^{c}_{a,t}/\hat v_{a,t},
+\end{equation}
+where $\hat v_{a,t}$ is the 60-session volatility of the futures and $G^c_{a,t}$ a cost gate: an asset
+is traded only while a round trip costs less than 10\% of its median 30-minute move on admitted
+releases over the past year. \ES\ and \NQ\ always pass (weights about 58\% and 42\%), as does \YM\
+(about 36/26/38\% with \ES\ and \NQ); \ZN\ passes only in part of 2023 (\ref{sec:treasury_result}).

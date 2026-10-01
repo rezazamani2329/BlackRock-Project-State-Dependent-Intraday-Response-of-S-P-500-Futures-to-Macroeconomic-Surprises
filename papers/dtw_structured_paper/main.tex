@@ -1,0 +1,112 @@
+% =====================================================================
+%  Submission draft formatted for the American Economic Review (AER)
+%  AER guidelines: PDF; 11- or 12-pt font, 1.5 spacing, 1-inch margins;
+%  abstract of 100 words or fewer; about 40-45 pages; Chicago author-date
+%  references; a separate Disclosure Statement for EACH coauthor;
+%  compliance with the AEA Data and Code Availability Policy.
+%  Build:  latexmk -pdf main.tex        (Overleaf: upload the folder)
+%  [TODO] notes print in red and [Source] notes in blue while \drafttrue.
+% =====================================================================
+\documentclass[11pt]{article}
+
+\usepackage[margin=0.9in]{geometry}
+\usepackage[T1]{fontenc}
+\IfFileExists{lmodern.sty}{\usepackage{lmodern}}{}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{placeins}
+\usepackage{booktabs,threeparttable,multirow}
+\usepackage{caption,subcaption}
+\usepackage{setspace}
+\usepackage{xcolor}
+\usepackage[round,authoryear]{natbib}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+
+\graphicspath{{figures/}}
+\captionsetup{font=footnotesize,labelfont=bf,labelsep=period,skip=4pt}
+\setstretch{1.0}
+\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+
+% ---- AER-style numbering: I., II., ...; A., B., ... -------------------
+\renewcommand{\thesection}{\Roman{section}}
+\renewcommand{\thetable}{\arabic{table}}
+\renewcommand{\thefigure}{\arabic{figure}}
+
+% ---- draft notes -----------------------------------------------------
+\newif\ifdraft \drafttrue
+\newcommand{\todo}[1]{\ifdraft{\color{red!70!black}\small\textsf{[TODO: #1]}}\fi}
+\newcommand{\source}[1]{\ifdraft{\color{blue!60!black}\footnotesize\textsf{[Source: #1]}}\fi}
+
+\newcommand{\ES}{\textsc{es}}
+\newcommand{\NQ}{\textsc{nq}}
+\newcommand{\ZN}{\textsc{zn}}
+\newcommand{\ZT}{\textsc{zt}}
+\newcommand{\YM}{\textsc{ym}}
+% ---- Outline numbering: unnumbered parts (Sensibility, Data, ...), I., II. inside each part,
+%      A., B. below that. \ref to a subsection prints e.g. "Model, Section I".
+\setcounter{secnumdepth}{3}
+\renewcommand{\thesubsection}{\Roman{subsection}}
+\renewcommand{\thesubsubsection}{\Alph{subsubsection}}
+\makeatletter
+\newcommand{\secname}{}
+\renewcommand{\@seccntformat}[1]{\csname the#1\endcsname.\quad}
+\renewcommand{\p@subsection}{\secname, Section~}
+\renewcommand{\p@subsubsection}{\secname, Section~\thesubsection.}
+\newcommand{\papersection}[2]{%
+  \section*{#1}\phantomsection\addcontentsline{toc}{section}{#1}%
+  \renewcommand{\secname}{#1}\def\@currentlabel{#1}\label{#2}%
+  \setcounter{subsection}{0}}
+\makeatother
+\renewcommand{\thesubsection}{\Roman{subsection}}
+
+\begin{document}
+
+% ======================= title page ====================================
+\begingroup
+\begin{center}
+{\Large\bfseries Surprises, Shapes or Machines?\\[4pt]
+\large Forecasting the Market's Response to Macroeconomic Releases with Dynamic Time Warping (DTW)\par}
+\vspace{1.5em}
+{\large Benjamin Steel, Reza Zamani, Jack Duncan, Aaryen Mehta and Hoshea Zeng\footnote{%
+Steel: BlackRock (email: \href{mailto:Benjamin.Steel@blackrock.com}{\nolinkurl{Benjamin.Steel@blackrock.com}}).
+Zamani: Haas School of Business, University of California, Berkeley (email:
+\href{mailto:rezazamani@berkeley.edu}{\nolinkurl{rezazamani@berkeley.edu}}).
+Duncan: Haas School of Business, University of California, Berkeley (email:
+\href{mailto:jack_duncan@berkeley.edu}{\nolinkurl{jack_duncan@berkeley.edu}}).
+Mehta: Haas School of Business, University of California, Berkeley (email:
+\href{mailto:aaryen@berkeley.edu}{\nolinkurl{aaryen@berkeley.edu}}).
+Zeng: Haas School of Business, University of California, Berkeley (email:
+\href{mailto:zenghaotian2@berkeley.edu}{\nolinkurl{zenghaotian2@berkeley.edu}}).
+This paper grew out of a
+BlackRock industry project in the Berkeley MFE program. We thank Ian Kaufman and Chris Pohalski
+(Haas School of Business) for coordinating the project. This paper represents the views of the
+authors only. It does not represent the views of BlackRock, Inc.\ or of the University of
+California, Berkeley.}\par}
+\vspace{0.5em}
+{\normalsize Draft: September 2026\par}
+\end{center}
+\vspace{1.5em}
+
+\input{sections/00_abstract}
+
+\endgroup
+\vspace{0.5em}
+
+\input{sections/01_introduction}
+\input{sections/01_sensibility}
+\input{sections/02_data}
+\input{sections/03_model}
+\input{sections/04_backtest}
+\FloatBarrier
+\input{sections/05_conclusion}
+
+\enlargethispage{2\baselineskip}
+\begingroup\footnotesize\setlength{\bibsep}{0pt}
+\IfFileExists{aea.bst}{\bibliographystyle{aea}}{%
+  \IfFileExists{chicago.bst}{\bibliographystyle{chicago}}{\bibliographystyle{apalike}}}
+\bibliography{references}
+\endgroup
+
+\end{document}

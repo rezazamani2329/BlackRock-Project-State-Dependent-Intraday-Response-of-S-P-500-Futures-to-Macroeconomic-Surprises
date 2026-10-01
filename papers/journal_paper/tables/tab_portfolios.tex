@@ -1,0 +1,25 @@
+\begin{table}[htbp]
+  \centering\small
+  \caption{Equal-risk team portfolios, test years 2021--2026 (weights from 2018--2020).
+  Return, volatility and drawdown at $\tfrac14$ tick per side.}
+  \label{tab:portfolios}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{lcccccccc}
+    \toprule
+    & \multicolumn{4}{c}{Sharpe} & & & & \\
+    \cmidrule(lr){2-5}
+    Portfolio & Gross & $\tfrac14$ tick & $\tfrac12$ tick & 2t+\$4.50 & Return & Vol & Max DD & Trades/yr \\
+    \midrule
+    Team, \ES\ (four strategies)       & 1.55 & 1.39 & 1.22 & 0.76    & 8.9\%  & 1.2\% & $-1.0\%$ & 739 \\
+    Team, equities (\ES+\NQ+\YM)       & 1.48 & 1.35 & 1.22 & 0.85    & 9.6\%  & 1.3\% & $-1.1\%$ & 1{,}131 \\
+    Team, \ES+\NQ                      & 1.45 & 1.31 & 1.17 & 0.78    & 9.0\%  & 1.3\% & $-1.1\%$ & 1{,}043 \\
+    Team, all markets (with \ZN)       & 1.35 & 0.83 & 0.30 & $-1.09$ & 4.3\%  & 1.0\% & $-1.1\%$ & 1{,}562 \\
+    Surprise + DTW ladder (\ES)        & 1.31 & 1.16 & 1.01 & 0.59    & 13.8\% & 2.2\% & $-2.0\%$ & 315 \\
+    Surprise + DTW event games (\ES)   & 1.32 & 1.14 & 0.96 & 0.46    & 14.8\% & 2.4\% & $-2.2\%$ & 465 \\
+    \midrule
+    Macro-surprise book, \ES+\NQ+\YM   & 1.13 & 1.07 & 1.01 & 0.82    & 14.6\% & 2.6\% & $-2.4\%$ & 280 \\
+    Macro-surprise book, \ES\ alone    & 1.18 & 1.09 & 0.99 & 0.74    & 15.9\% & 2.7\% & $-2.6\%$ & 96 \\
+    DTW ladder, \ES+\NQ\ (own weights) & 0.66 & 0.54 & 0.42 & 0.07    & 7.4\%  & 2.6\% & $-5.3\%$ & 427 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

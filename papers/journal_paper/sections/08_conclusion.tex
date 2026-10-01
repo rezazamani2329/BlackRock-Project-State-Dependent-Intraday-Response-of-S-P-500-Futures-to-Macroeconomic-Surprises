@@ -1,0 +1,23 @@
+\section{Conclusion}\label{sec:conclusion}
+
+How much of the macroeconomic news is left after the first minute? In equity-index futures, about
+a quarter of the response to a CPI surprise arrives after the first minute, the consensus surprise
+predicts its direction out of sample, and the drift lasts about 30 minutes. A strategy that trades
+it one minute after the release earns a Sharpe ratio of about 0.7--1.1 in \ES, \NQ\ and \YM\ depending on
+the set of releases and the cost assumption, with no exposure to the market. Combined with the
+other approaches, which lose in different years, the equity-index portfolio reaches 1.35 at a
+quarter tick and 0.85 at our base cost. In Treasury futures,
+the surprise is priced just as reliably, but almost entirely within the first minute, and the
+remaining drift is smaller than one tick. Price-path analogues do not forecast the direction of
+the drift, although their dispersion forecasts its size, and backtests that enter at the release
+price attribute to skill a first-minute jump that no investor can trade.
+
+These results have implications for both research and practice. They place most of the price
+discovery after scheduled releases within the first minute, identify the minimum tick as a
+friction that leaves a small predictable component in Treasury prices, and show that the evaluation
+of event-driven strategies must fix the entry at an executable price. For practitioners, the
+consensus surprise is the source of a small but persistent edge in equity-index futures, the
+dispersion of price-path analogues is a useful risk input, and execution quality in the first
+minute after a release decides whether the edge survives. Section~\ref{sec:future} sets out the
+research that would test these conclusions further, from measured execution costs and tick data to
+richer surprise measures and other markets.

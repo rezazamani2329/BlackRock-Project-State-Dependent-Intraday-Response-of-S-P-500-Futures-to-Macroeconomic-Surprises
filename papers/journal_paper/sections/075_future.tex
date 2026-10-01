@@ -1,0 +1,78 @@
+\section{Directions for Future Research}\label{sec:future}
+
+Our results answer one question---how much of the news is left after the first minute---and
+raise several others. We group them by the finding that motivates each, and for each we say what
+data or test would answer it.
+
+\paragraph{1. Execution in the first minutes.} Every result in the paper depends on the cost
+of a trade one minute after a release, and we model that cost as a fixed number of ticks. In
+practice, depth in the order book thins out just before a release and rebuilds over the next
+minutes, so slippage is itself state-dependent: it is likely to be largest after the largest
+surprises, which are the trades the surprise model takes. Recorded fills, or depth-of-book data
+(for example Databento's MBP-10 feed for the same contracts), would allow the cost in
+equation~\eqref{eq:cost} to be replaced by a measured cost that depends on the size of the surprise,
+the time since the release and the trade's size. The same data would answer how much capital the
+strategy can carry before its own trades move the price, a question our backtests cannot address.
+
+\paragraph{2. Price discovery inside the first minute.} We find that most of the response is in
+the first minute, but our bars cannot say how it is distributed within that minute. Tick data
+would show how many seconds the market needs to price a surprise, whether the speed has changed
+over the sample, and whether the residual drift we trade is related to how quickly the first
+seconds absorb the news. It would also allow the analysis of latency in
+Section~\ref{sec:environment} to be extended from minutes to seconds, so that the value of the
+first-minute jump to a faster trader can be measured rather than excluded.
+
+\paragraph{3. Better measures of the surprise.} We measure the surprise as the actual figure minus
+the median forecast, standardized. Several refinements are natural. The dispersion of forecasts
+measures how uncertain the market was, and a surprise relative to an uncertain consensus may be
+priced differently. Revisions to earlier releases and the components of a release (core versus
+headline, services versus goods) may carry information that the headline surprise misses. Nowcasts
+and market-implied expectations, such as inflation swaps or fed funds futures, are a measure of what
+was expected that is less stale than a survey. Finally, the text of the release and of FOMC
+statements and minutes can be scored with language models, which would bring the FOMC decision---which
+our impact screen does not admit---into the event set.
+
+\paragraph{4. Regimes and the Fed's reaction function.} The surprise book earns most of its return in
+2022: without that year its Sharpe ratio is close to zero in every equity market
+(Figure~\ref{fig:byyear}). A plausible explanation is that inflation surprises matter most when the
+Fed is expected to respond to them. This can be tested directly by conditioning the drift on
+measures of the policy regime---the expected path of rates, whether the Fed is tightening, the
+level of inflation relative to target---and by letting the coefficients in
+equation~\eqref{eq:drift_model} vary over time, for example with a Kalman filter or a rolling
+Bayesian prior. A model of this kind would also say in advance when the edge is likely to be small,
+which is as valuable to a practitioner as the edge itself.
+
+\paragraph{5. Extensions of price-path analogues.} DTW analogues do not forecast the direction of
+the drift, but their dispersion forecasts its size, the first window after the release is the best of the five, and the analogues add value when they agree with the surprise:
+in \YM\ the book that trades only when the two agree has a Sharpe ratio of 0.94 with the same value
+outside 2022. These findings suggest four extensions. First, multivariate paths that match the equity
+and Treasury reaction together, since the joint reaction says more about the nature of the news
+than either market alone. Second, a book that uses DTW only for sizing and the surprise for direction,
+tested out of sample on all four markets. Third, learned similarity measures (for example shapelets or
+a neural embedding of the path) in place of a fixed distance. Fourth, a book that trades only the
+first window, which keeps the part of the ladder with information and drops the part that only adds
+costs.
+
+\paragraph{6. Other markets and countries.} The tick-size explanation for the Treasury result
+predicts that a contract with a finer tick relative to its moves should show a tradable drift. This
+can be tested on the 2-year and 5-year notes and on SOFR futures, whose ticks are small relative to
+their moves around policy news, and on the Bund, the gilt and JGB futures around their own countries'
+releases. In equities, the Russell 2000 future (traded since 2017) and the Euro Stoxx 50 offer a
+test of whether the drift is larger in less liquid or more rate-sensitive indices. Currency and
+commodity futures around U.S.\ releases would show whether the drift is a feature of U.S.\ equity
+futures or of how markets in general absorb scheduled news.
+
+\paragraph{7. Portfolio construction.} Our portfolios use fixed equal-risk weights, chosen on
+2016--2018. The approaches lose in different years, which suggests that weights that adapt---to recent
+performance, to the regime of item 4, or to the expected cost of item 1---could do better, though at
+the price of more choices and a higher risk of overfitting. A careful test would fix the rule for
+changing the weights in advance and report it with the same random-sign and walk-forward checks we
+use for the books themselves.
+
+\paragraph{8. Why does the drift exist?} We document a drift but test its cause only indirectly.
+Three explanations make different predictions. Limits to arbitrage predict a larger drift when
+liquidity is thin and costs are high. Limited attention predicts a larger drift when several releases
+arrive at the same time or when the surprise is in a less-watched component. Disagreement predicts a
+larger drift when forecasts are dispersed and when volume after the release is high. Volume, order-flow
+imbalance and the dispersion of forecasts around each release are enough to tell them apart, and the
+answer would say whether the edge is likely to last.

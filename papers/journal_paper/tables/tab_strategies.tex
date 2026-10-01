@@ -1,0 +1,28 @@
+\begin{table}[htbp]
+  \centering\small
+  \caption{Sharpe ratio of each strategy on each market, test years 2021--2026. ``--'' = the
+  strategy is not available on that market.}
+  \label{tab:strategies}
+  \begin{threeparttable}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{lccccccccc}
+    \toprule
+    & \multicolumn{4}{c}{$\tfrac14$ tick per side} & \multicolumn{4}{c}{2 ticks + \$4.50} & Valid. \\
+    \cmidrule(lr){2-5}\cmidrule(lr){6-9}\cmidrule(lr){10-10}
+    Strategy & \ES & \NQ & \ZN & \YM & \ES & \NQ & \ZN & \YM & \ES \\
+    \midrule
+    Macro-surprise book         & 1.09 & 0.75 & $-0.16$ & 1.06 & 0.74 & 0.64 & $-1.51$ & 0.82 & 1.04 \\
+    CPI surprise model          & 0.51 & 0.46 & 0.17    & 0.39 & 0.61 & 0.45 & $-0.43$ & 0.29 & 1.27 \\
+    DTW ladder book             & 0.64 & 0.11 & $-0.97$ & $-0.39$ & 0.10 & $-0.04$ & $-5.03$ & $-0.74$ & 0.59 \\
+    DTW event-game book         & 0.42 & -- & -- & -- & $-0.29$ & -- & -- & -- & 0.26 \\
+    Machine-learning classifier & 0.95 & -- & -- & -- & 0.81 & -- & -- & -- & 0.38 \\
+    \midrule
+    Buy and hold (no costs)     & 0.69 & 0.58 & $-0.69$ & 0.67 & & & & & 0.80 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Notes: Daily Sharpe ratios on the session grid. The DTW ladder uses the authors' own feature
+    panel and rule; the validation column reports 2018--2020 at $\tfrac14$ tick per side.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}

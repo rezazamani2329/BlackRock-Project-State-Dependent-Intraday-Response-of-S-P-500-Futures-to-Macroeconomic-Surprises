@@ -1,0 +1,107 @@
+\section{Introduction}\label{sec:intro}
+
+Scheduled macroeconomic releases are among the cleanest information events in financial
+markets. Their timing is announced months in advance, a consensus forecast is published before
+each release, and the news itself---the difference between the actual figure and the
+consensus---arrives at a known second. Prices of index and Treasury futures react within the first
+minute \citep{Fleming1999, Balduzzi2001, Andersen2003, Andersen2007}. The speed of that first
+reaction is well documented. Much less is known about what happens next: how much of the news is
+still unpriced once the first minute has passed, whether the remaining move is predictable from
+information that is public at that time, and whether it is large enough to be exploited once
+the cost of trading is paid.
+
+These questions matter for two reasons. First, they measure the speed of price discovery in some
+of the most liquid markets in the world. If prices fully incorporated the release within a
+minute, any later move would be unrelated to the surprise. If they do not, the size and duration
+of the remaining drift tell us how long it takes markets to agree on what a number means. Second,
+the answer separates two kinds of apparent profitability. A strategy that trades on the surprise
+at the release price captures the first-minute jump, which no investor can trade; a strategy that
+enters one minute later captures only the drift. Backtests that do not distinguish the two can
+overstate what is achievable by a large factor.
+
+We study these questions in four futures markets with different sensitivities to macro
+news: the E-mini S\&P 500 (\ES), the E-mini Nasdaq-100 (\NQ), the E-mini Dow (\YM) and the 10-year
+Treasury note (\ZN).
+We use one-minute prices from July 2010 to June 2026 and the Bloomberg release calendar with
+consensus forecasts for 179 U.S.\ release lines. Our design has three features. First, every
+trade enters at the close of the first one-minute bar after the release, so the untradeable jump
+is excluded by construction. Second, every model parameter---which releases to trade, the sign of
+each release's effect, regression slopes and pattern-matching thresholds---is re-estimated each
+year using only earlier data, and the last years of the sample are held out. Third, we compare
+four forecasting approaches that were developed independently by the authors on the same data,
+entry rule and cost grid: (i) the sign of the standardized consensus surprise; (ii) dynamic time
+warping (DTW) analogues of the price path just before entry, which ask whether similar paths in
+the past were followed by a rise or a fall; (iii) DTW ``event games'' built on longer paths around
+the release; and (iv) a machine-learning classifier. The comparison is informative because the
+approaches use very different information: the first uses only the published numbers, the second
+and third use only prices, and the fourth combines both.
+
+Five findings emerge. First, the news is not fully priced after the first minute in equity-index
+futures. After a hot CPI print (a headline surprise above half a standard deviation), \ES\ falls
+about 37 basis points (bps) in the first minute and a further 15--18 bps over the next 30 minutes;
+\NQ\ falls about 55 bps and then a further 20 bps, and \YM\ about 31 bps and then a further 17
+bps. Roughly a quarter of the CPI response arrives
+after the first minute. In \ZN\ the post-minute continuation is only 4--5 bps.
+
+Second, the consensus surprise predicts the direction of this drift out of sample. A strategy
+that trades the sign of the surprise of CPI alone, entering one minute after the release and
+holding for 30 minutes, earns a net Sharpe ratio of about 1.0 in \ES\ and \NQ\ over 2019--2026
+after a cost of two ticks plus \$4.50 per round trip. Extending it to about ten release families
+selected each year from history raises the trade count tenfold, to about 100 trades a year per
+market, with Sharpe ratios of 0.65 (\ES) and 0.71 (\NQ). On the held-out years 2021--2026 at the
+lower cost assumption common among practitioners (a quarter tick per side) the Sharpe ratios are
+1.09 and 0.75. The same code, applied without change to the E-mini Dow after these results were
+known, gives 1.06 on its broad book, and the three equity indices together give 1.07. For the CPI strategy, the direction of the surprise is worth about 13 percentage
+points of cumulative return relative to being long in exactly the same 30-minute windows.
+
+Third, price-path analogues do not reliably forecast the direction of the drift. Their rank correlation
+with the next 30-minute return is between 0.01 and 0.04 in every market; the sign of their
+forecast was positive in 2018--2020 and negative in 2021--2026 in \ES\ and \NQ; and requiring the
+analogues to agree with the surprise lowers performance in the held-out years in \ES\ and \NQ\ and
+leaves it unchanged in \YM. Run on \YM\ with the same code, the
+analogue book loses even before costs. The dispersion of the analogues,
+by contrast, is a stable forecast of the size of the move.
+
+Fourth, the drift in \ZN\ is smaller than the cost of trading it. The surprise predicts \ZN's
+first-minute jump as well as it predicts \ES's ($R^2$ of about 0.30 at five minutes), and a gross
+edge exists after the first minute, but at about 2.7 bps per trade it is below the 3 bps round-trip
+cost of one tick. Tick size relative to the size of post-announcement moves acts as a limit to
+arbitrage.
+
+Fifth, the entry assumption dominates reported performance. The same classifier positions earn a
+Sharpe ratio of 2.1 when entered at the pre-release price and 0.9 when entered one minute later;
+about 80\% of the reported profit is the first-minute jump. Across approaches, daily returns are
+nearly uncorrelated, and the surprise and DTW books lose in different years, so an equal-risk
+combination beats the best single approach: 1.39 on \ES\ and 1.35 on the three equity indices at a
+quarter tick, against 1.09, with half the volatility. At realistic costs the high-turnover
+pattern-based approaches reduce the combined performance, and the equity portfolio keeps 0.85.
+
+\paragraph{Related literature.}
+Our paper contributes to three strands of research. The first studies the high-frequency response
+of asset prices to macroeconomic news. \citet{Fleming1999} and \citet{Balduzzi2001} show that
+Treasury prices adjust to announcements within minutes, with a burst of volume and volatility;
+\citet{Andersen2003, Andersen2007} document that surprises move foreign exchange, bond and stock
+prices almost instantly and that the response depends on the state of the economy;
+\citet{Gurkaynak2005} show that monetary-policy statements move asset prices beyond the policy
+rate itself; and \citet{Savor2013} and \citet{Lucca2015} document return premia on announcement
+days and before FOMC meetings. We focus on the part of the response that remains after the first
+minute, compare it across equity and Treasury futures, and ask whether it can be exploited net of
+costs. The second strand studies how announcement effects depend on market conditions
+\citep{Andersen2007}. We find strong in-sample state dependence of the CPI response in equity
+futures, concentrated in the untradeable first minute and detectable in real time only from 2022,
+and no out-of-sample gain from conditioning on it. The third strand concerns pattern-based
+forecasting and the evaluation of trading rules. Dynamic time warping \citep{Sakoe1978,
+Berndt1994} is widely used to match time series of different speeds; we provide a clean
+out-of-sample test of its directional content and separate it from its information about
+volatility. Following \citet{Harvey2016} and \citet{Bailey2014}, we treat the multiplicity of
+tested specifications explicitly, and we report random-sign and block-bootstrap inference
+\citep{Kunsch1989} alongside heteroskedasticity-robust regressions \citep{MacKinnon1985} and
+false-discovery-rate control \citep{Benjamini1995}.
+
+\paragraph{Roadmap.}
+Section~\ref{sec:data} describes the institutional setting and data.
+Section~\ref{sec:discovery} documents price discovery after releases.
+Section~\ref{sec:exploit} sets out the evaluation protocol and the four forecasting approaches.
+Section~\ref{sec:results} reports the results, Section~\ref{sec:mechanisms} interprets them,
+Section~\ref{sec:robust} presents robustness checks, Section~\ref{sec:future} sets out directions for future research, and Section~\ref{sec:conclusion} concludes.
+Appendix~\ref{app:additional} collects additional figures and tables for each stage of the analysis.

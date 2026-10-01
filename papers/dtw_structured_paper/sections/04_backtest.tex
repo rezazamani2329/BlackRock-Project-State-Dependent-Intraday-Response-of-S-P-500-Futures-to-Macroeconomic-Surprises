@@ -1,0 +1,357 @@
+\papersection{Backtest}{sec:backtest}
+
+\subsection{What did we test}\label{sec:whattest}
+
+We trade the model of the Model part, with its setting and rule fixed in advance, and score it on
+the held-out years. Returns are in bps of one contract's notional, summed rather than compounded,
+on a daily grid of trading sessions with zero on days without a trade; return, volatility and
+the Sharpe ratio are annualized over 252 sessions. Costs are charged per side at a quarter or a
+half tick.
+
+\subsubsection{Time period}
+
+\paragraph{Train, validation and test split.} Table~\ref{tab:split} shows how the years are used.
+The first three years only fill the library of past reactions and the history the universe
+screen needs. Settings are chosen on the training years, checked on the validation years, and
+the test years are used to report results. The gate cut-offs and the size reference come from
+2013--2020, so nothing in the test years is fitted.
+
+\begin{table}[!tb]
+  \centering\footnotesize
+  \caption{Sample split.}\label{tab:split}
+  \begin{tabular}{lll}
+    \toprule
+    Period & Years & Use \\
+    \midrule
+    Burn-in    & 2010--2012 & library of past reactions and screen history only \\
+    Train      & 2013--2017 & choosing the DTW setting, gate and sizing \\
+    Validation & 2018--2020 & checking that the choice holds \\
+    Test       & 2021--2026 & results \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Why 30 minutes.} Each trade is held for 30 minutes and each path is the 31 minutes
+ending at the entry. The horizon matches how long the news keeps moving prices: after hot CPI
+prints \ES\ falls about 37 bps in the first minute and a further 17 bps by $T+30$, and is roughly
+flat over the following half hour; \NQ\ and \YM\ behave the same way. A 30-minute path is long
+enough to contain the whole first reaction and short enough that the library of past releases at
+the same clock time holds hundreds of comparable paths. Equal path and holding lengths also make
+the five windows of the ladder back-to-back, so no minute is traded twice.
+
+\subsubsection{Assets}
+
+Each asset is first traded on its own with the same setting, gate and sizing: \ES\ and \NQ, the
+core of the book; \YM, run through the identical pipeline after the \ES\ and \NQ\ results were
+known, as an out-of-sample market; and \ZN. Two multi-asset books follow.
+
+\subsubsection{Equities book}
+
+The equities book combines \ES\ and \NQ\ with the inverse-volatility weights and cost gate of
+equation~\eqref{eq:assetweights}; both always pass the gate at a quarter tick, and the weights
+average 58\% \ES\ and 42\% \NQ. We also report the three-index book \ES\ + \NQ\ + \YM, with
+weights of about 36\%, 26\% and 38\%.
+
+\subsubsection{Combined book}
+
+The combined book adds \ZN\ on the same terms, and the cost gate decides whether it is traded.
+Before costs every asset passes and \ZN\ takes about 60\% of the weight; at a quarter tick a round
+trip is 10--17\% of \ZN's typical 30-minute move, so it is excluded except in part of 2023
+(\ref{sec:treasury_result}).
+
+\subsection{General Statistics}\label{sec:signalquality}
+
+\paragraph{Signal quality.} Before trading, we ask whether the two features rank what happened
+next (Figure~\ref{fig:ic}). The direction forecast $\mu$ ranks the next return
+\emph{negatively} in the training years ($-0.060$ in \ES, $-0.042$ in \NQ) and \emph{positively}
+in the validation years ($+0.069$ and $+0.091$); in \YM\ and \ZN\ it is close to zero in both
+($-0.006$ and $+0.018$; $-0.003$ and $-0.005$). The dispersion $\sigma$, in contrast, ranks the
+absolute size of the next move positively in every market and period, at 0.10--0.24. The
+analogues know how large the next move will be; what they say about its direction is small and
+changed sign around 2018.
+
+\begin{figure}[!tb]
+  \centering
+  \includegraphics[width=0.55\linewidth]{dtw_ic}
+  \caption{Information coefficients of the DTW features on admitted games, \ES\ and \NQ. Panel (a):
+  rank correlation of $\mu$ with the next 30-minute return. Panel (b): rank correlation of $\sigma$
+  with the absolute next 30-minute return.}
+  \label{fig:ic}
+\end{figure}
+
+\paragraph{Results.} Table~\ref{tab:results} reports the test years. The \ES\ book trades 1,202
+times, about 225 a year, and earns a Sharpe ratio of 0.78 before costs, 0.64 at a quarter tick and
+0.49 at a half tick, against 0.69 for holding \ES, with a drawdown of $-5.0\%$ against $-31.1\%$
+and a beta of 0.007. Half its trades win and 53\% are long, so it is not a disguised long
+position. \NQ\ is positive but weak (0.11 at a quarter tick). \YM\ does not work: only five
+families pass its screen, and it loses before costs ($-0.32$) and after them ($-0.39$). The
+equities book earns 0.54 with a drawdown of $-5.3\%$; adding \YM\ lowers it to 0.27. The combined
+book earns 0.40 (Figure~\ref{fig:sharpe}).
+
+\begin{table}[!tb]
+  \centering\footnotesize
+  \caption{General statistics of the DTW event book, test years 2021--2026, quarter tick per side.}\label{tab:results}
+  \begin{threeparttable}
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{lccccccccc}
+    \toprule
+    & & \multicolumn{3}{c}{Sharpe ratio} & Buy-and- & Total & Ann.\ & Max & Hit \\
+    \cmidrule(lr){3-5}
+    Book & Trades & Gross & $\tfrac14$ tick & $\tfrac12$ tick & hold & return & vol & DD & rate \\
+    \midrule
+    \ES & 1,202 & 0.78 & 0.64 & 0.49 & 0.69 & $10.9\%$ & 3.2\% & $-5.0\%$ & 50.0\% \\
+    \NQ & 1,141 & 0.14 & 0.11 & 0.08 & 0.58 & $2.1\%$ & 3.6\% & $-8.2\%$ & 49.5\% \\
+    \YM & 870 & $-0.32$ & $-0.39$ & $-0.47$ & 0.67 & $-4.8\%$ & 2.4\% & $-8.0\%$ & 50.0\% \\
+    \ZN & 1,945 & 0.34 & $-0.97$ & $-2.24$ & $-0.69$ & $-7.4\%$ & 1.4\% & $-8.0\%$ & 46.9\% \\
+    Equities (\ES\ + \NQ) & 2,343 & 0.66 & 0.54 & 0.42 & 0.65 & $7.4\%$ & 2.6\% & $-5.3\%$ & 49.8\% \\
+    \ES\ + \NQ\ + \YM & 3,213 & 0.39 & 0.27 & 0.14 & 0.68 & $2.8\%$ & 2.0\% & $-3.0\%$ & 49.8\% \\
+    Combined (\ES\ + \NQ\ + \ZN) & 2,476 & 0.76 & 0.40 & 0.41 & 0.24 & $5.4\%$ & 2.5\% & $-5.3\%$ & 49.3\% \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Notes: Direction $\operatorname{sign}(\mu)$, outer 60\% of $\mu$ with cut-offs from
+    2013--2020, size $\min(\tilde\sigma/\sigma,2)$, five windows per admitted release. Return,
+    volatility, drawdown and hit rate at a quarter tick. Multi-asset books use the weights and
+    cost gate of equation~\eqref{eq:assetweights}, so each cost column is the book a trader facing
+    that cost would run. Buy-and-hold drawdowns: \ES\ $-31.1\%$, \NQ\ $-48.3\%$, \YM\ $-25.6\%$.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\begin{figure}[!tb]
+  \centering
+  \begin{subfigure}[b]{0.58\linewidth}\centering
+    \includegraphics[width=\linewidth]{sharpe_by_cost_with_ym}
+    \caption{Sharpe ratio by cost level, against buy-and-hold.}\label{fig:sharpe}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.4\linewidth}\centering
+    \includegraphics[width=\linewidth]{robustness_es}
+    \caption{\ES\ Sharpe ratio at a quarter tick by $K$, gate width and cut-off rule.}\label{fig:robust}
+  \end{subfigure}
+  \caption{The DTW event book, 2021--2026. Panel (b): cut-offs are either fixed from 2013--2020
+  or recomputed each year.}
+  \label{fig:book}
+\end{figure}
+
+\paragraph{Checks.}\label{sec:robust} Table~\ref{tab:checks} reports five checks. Rebuilding the
+features with the path running five minutes \emph{past} the entry raises the Sharpe ratio to
+about 2.8 in every market, so the real book's timing is sound. Drawing the direction of each trade
+at random beats the \ES\ book only 4.1\% of the time, but beats \NQ\ and \YM\ often ($p=0.37$ and
+0.76). Holding the same windows always long loses in every book, so the \ES\ profit comes from
+direction. \ES\ breaks even at 1.36 ticks per side. Across twelve gate, cut-off and sizing rules
+\ES\ and the equities book are always positive, \YM\ only once, and across the number of
+neighbours $K$ (Figure~\ref{fig:robust}) the \ES\ Sharpe ratio ranges from 0.17 to 0.64. Broader
+searches over about 138,000 settings confirm that the direction is unstable across periods (the
+Sharpe ratios of the same settings on 2014--2017 and 2018--2020 correlate at 0.15). The appraisal
+ratio---alpha on buy-and-hold over residual volatility---is 0.61 for \ES\ and 0.53 for the
+equities book; with a directional IC of 0.027 on about 225 bets a year, the fundamental law of
+active management \citep{Grinold2000} implies about 0.4, so 0.4--0.6 is a fair range.
+
+\begin{table}[!tb]
+  \centering\footnotesize
+  \caption{Checks on the DTW event book, 2021--2026, quarter tick per side.}\label{tab:checks}
+  \begin{threeparttable}
+  \begin{tabular}{lccccc}
+    \toprule
+    & \ES & \NQ & \YM & \ES\ + \NQ & \ES\ + \NQ\ + \YM \\
+    \midrule
+    Leak test: Sharpe with the path 5 minutes past entry & 2.86 & 2.85 & 2.84 & 3.62 & 3.83 \\
+    Random-sign test: $p$-value, 5,000 draws & 0.041 & 0.37 & 0.76 & 0.064 & 0.18 \\
+    Always long in the same windows: total return & $-2.4\%$ & $-1.0\%$ & $-6.2\%$ & $-1.8\%$ & $-3.6\%$ \\
+    Break-even cost, ticks per side & 1.36 & 1.10 & --- & 1.35 & 0.76 \\
+    Rules with Sharpe $>0$, of 12 & 12 & 7 & 1 & 12 & 12 \\
+    Appraisal ratio vs buy-and-hold & 0.61 & 0.11 & $-0.38$ & 0.53 & 0.26 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Notes: \YM\ loses before costs, so it has no break-even cost. The \YM\ columns come from
+    the same code run with \YM\ added, in which the \ES, \NQ\ and equities results reproduce exactly.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\subsection{Hit rate per window}\label{sec:hitrate}
+
+Table~\ref{tab:window} and Figure~\ref{fig:byanchor} split the book by window. The first window,
+entering at $T+1$, is the best in every equity index: it wins 53\% of its trades in \ES, 53\% in
+\NQ\ and 58\% in \YM, with Sharpe ratios of 0.95, 0.38 and 0.41, against 1.7\%, 5.4\% and $-3.0\%$ for
+always long in the same windows. The hit rate then falls toward a coin flip in the second to
+fourth windows, and the fifth, at $T+121$, is the worst everywhere: 43\% in \ES\ (Sharpe $-0.91$),
+46\% in \NQ\ and 45\% in \YM. In \YM\ the first window is the only one that makes money, which is
+why its five-window book loses; in \ZN\ no window reaches 50\%. The path carries information while
+it still contains the reaction to the release, and less once the reaction is over. Choosing the
+window on these test years would be choosing on the test period, so the book keeps all five.
+
+\begin{table}[!tb]
+  \centering\footnotesize
+  \caption{Hit rate and Sharpe ratio by window, 2021--2026, quarter tick per side.}\label{tab:window}
+  \begin{threeparttable}
+  \begin{tabular}{lccccc}
+    \toprule
+    Entry & $T+1$ & $T+31$ & $T+61$ & $T+91$ & $T+121$ \\
+    \midrule
+    \ES\ hit rate (Sharpe) & 53.4\% (0.95) & 50.2\% (0.27) & 52.1\% (0.33) & 50.0\% (0.45) & 43.4\% ($-0.91$) \\
+    \NQ\ hit rate (Sharpe) & 53.3\% (0.38) & 49.3\% (0.02) & 50.0\% ($-0.18$) & 48.5\% ($-0.04$) & 45.8\% (0.01) \\
+    \YM\ hit rate (Sharpe) & 58.1\% (0.41) & 47.8\% ($-0.40$) & 46.2\% ($-0.17$) & 52.1\% ($-0.18$) & 44.7\% ($-0.57$) \\
+    \ZN\ hit rate (Sharpe) & 47.3\% ($-0.39$) & 48.5\% ($-0.41$) & 46.9\% (0.02) & 45.8\% ($-0.64$) & 45.7\% ($-0.94$) \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Notes: Trades per window: 150--262 in the equity indices and 339--442 in \ZN.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.72\linewidth]{pnl_curves_by_anchor_with_ym}
+  \caption{Cumulative net P\&L at a quarter tick by window, 2021--2026, against always long in the
+  same windows. Rows: \ES, \NQ, \YM, \ZN; columns: entry at $T+1$, $T+31$, $T+61$, $T+91$ and $T+121$.}
+  \label{fig:byanchor}
+\end{figure}
+
+\subsection{2022 for equities}\label{sec:2022}
+
+Table~\ref{tab:byyear} splits the test period by year. The \ES\ and equities books are positive
+in five of six years; 2022, the year of the inflation shock and the fastest monetary tightening
+in four decades, is the exception (equities $-0.87$, $-2.5\%$). A month-by-month breakdown shows
+that 2022 was not a period of poor matches: the mean weighted similarity of the neighbours was
+about 0.51 in \ES\ and 0.50 in \NQ\ in the first half of 2022, the same as in other years. In those
+months the release windows themselves fell (about $-10$ bps on average in \ES\ and $-12$ bps in
+\NQ), the \ES\ book was long in about 63\% of its trades, and the worst month, May, was a short
+position into a rebound. The paths matched as closely as usual; what those paths had done next in
+earlier years no longer held, because the market's reading of the same data had changed with the
+Federal Reserve's reaction function. \YM\ moved the other way: it gained in 2022 (0.34) and lost
+most in 2025. Win rates are 47--54\% in every year, so the edge, where it exists, comes from
+winners being larger rather than more frequent.
+
+\begin{table}[!tb]
+  \centering\footnotesize
+  \caption{Sharpe ratio by year, quarter tick per side.}\label{tab:byyear}
+  \begin{threeparttable}
+  \begin{tabular}{lcccccc}
+    \toprule
+    & 2021 & 2022 & 2023 & 2024 & 2025 & 2026 \\
+    \midrule
+    \ES & 0.67 & $-0.48$ & 0.89 & 1.33 & 0.76 & 1.27 \\
+    \NQ & 0.12 & $-0.84$ & $-0.06$ & $-0.28$ & 0.94 & 1.36 \\
+    \YM & $-0.23$ & 0.34 & 0.44 & $-0.28$ & $-1.67$ & $-0.61$ \\
+    \ZN & $-1.24$ & $-1.01$ & $-1.73$ & $-0.52$ & $-0.25$ & $-0.89$ \\
+    Equities (\ES\ + \NQ) & 0.71 & $-0.87$ & 0.70 & 0.78 & 1.04 & 1.58 \\
+    \quad return & $+1.3\%$ & $-2.5\%$ & $+1.6\%$ & $+1.7\%$ & $+3.1\%$ & $+2.3\%$ \\
+    \ES\ + \NQ\ + \YM & 0.46 & $-0.47$ & 0.80 & 0.49 & $-0.01$ & 1.16 \\
+    Combined (\ES\ + \NQ\ + \ZN) & 0.71 & $-0.87$ & $-0.23$ & 0.77 & 1.03 & 1.57 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Notes: 2026 is a partial year (to June).
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\subsection{Regime change for the 10-year}\label{sec:treasury_result}
+
+\ZN\ went through a larger change of regime than the equity indices. Before 2021 policy rates
+were near zero, \ZN's moves after releases were small, and a round trip at a quarter tick cost
+13--21\% of its typical 30-minute move in every year. The 2022 tightening made rate news the
+market's main driver and \ZN's post-release moves larger: the cost ratio fell from 17\% in 2021
+to 15\% in 2022 and 10\% in 2023, before rising again to 12--17\% in 2024--2026. Before costs the
+book does find something in \ZN: a gross Sharpe ratio of 0.34 and a small positive directional IC
+(+0.016). But the regime change did not make the direction tradeable. In 2023, when the larger
+moves let \ZN\ through the cost gate for part of the year, it lost, and the combined book scored
+$-0.23$ that year against 0.70 for equities. \ZN\ loses in every test year at a quarter tick, its
+strategy tracks being always long in the same windows ($-7.4\%$ for both), and it breaks even at
+only 0.07 ticks per side. Without a gate, fixed equal-risk weights would have given \ZN\ 60\% of
+the combined book at every cost and a Sharpe ratio of $-0.23$; the cost gate is what keeps the
+combined book at 0.40. Bigger rate moves did not mean that the past paths forecast the next one:
+in \ZN\ the tick is larger than the edge in any regime we observe.
+
+\subsection{Against the surprise strategy}\label{sec:vs_surprise}
+
+The natural competitor to the DTW book is a strategy that takes its direction from the consensus
+surprise: buy after a release that beats the median forecast in the direction the market has
+rewarded, sell after one that misses. Our companion study runs such books on the same four markets,
+with the same releases, an entry one minute after the release and a 30-minute hold, over 2019--2026
+and at a harsher cost of two ticks round trip plus \$4.50 in fees. It also runs a simple DTW-only
+book at the first window and two books that trade only when the surprise and the DTW forecast agree.
+These are not the ladder book of this paper---they use one window, a longer sample and a different
+cost---but they show where the direction of the trade is best taken from.
+
+
+\begin{figure}[!tb]
+  \centering
+  \begin{minipage}[t]{0.49\linewidth}\centering
+    \includegraphics[width=\linewidth]{nb07b_sharpe_by_market}
+    \caption{Net Sharpe ratio by market and strategy, 2019--2026, two ticks round trip plus \$4.50.
+  ``All'': every release family that passes the impact screen; ``CPI'': CPI releases only;
+  ``naive'': trade the sign of the surprise; ``surprise model'': trade a fitted drift forecast;
+  ``DTW only'': trade the sign of the DTW forecast at the first window; ``surprise + DTW agree'':
+  trade the surprise only when the DTW forecast has the same sign. \ZN\ has no CPI agree trades.}
+    \label{fig:vs_surprise}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.49\linewidth}\centering
+    \includegraphics[width=\linewidth]{nb07b_portfolio_cumulative}
+    \caption{Cumulative net P\&L of the broad surprise book (``All $\cdot$ naive'') by market,
+  risk-weighted, and of the two-, three- and four-market portfolios with equal-risk weights fixed on
+  2016--2018 (\ES\ 1.00, \NQ\ 0.71, \YM\ 1.02, \ZN\ 2.67), 2019--2026, net of costs.}
+    \label{fig:vs_surprise_pnl}
+  \end{minipage}
+\end{figure}
+
+Figure~\ref{fig:vs_surprise} gives the answer market by market. In all three equity indices the
+broad surprise book earns about the same net Sharpe ratio, 0.65 in \ES, 0.71 in \NQ\ and 0.68 in
+\YM, and the CPI surprise model earns 0.45--0.76. The DTW-only book is weaker in each: it loses in
+\ES\ ($-0.39$), is flat in \NQ\ (0.08) and earns 0.47 in \YM. DTW adds most as a filter on the
+surprise. Keeping only the trades on which the two agree raises the Sharpe ratio of the broad book
+in \YM\ to 0.94 (0.94 also without 2022), and keeping only the CPI trades on which they agree raises
+\ES's CPI book from 0.76 to 0.93, on fewer trades. In \ES\ the broad agree book is lower than the
+surprise book alone (0.31), so the filter does not help everywhere. In \ZN\ every book loses after
+costs, as in \ref{sec:treasury_result}: the broad surprise book goes from $-0.30$ before costs to
+$-2.42$ after them.
+
+
+Figure~\ref{fig:vs_surprise_pnl} combines the surprise books across markets. The three equity
+books rise together, mostly in 2022, and the \ES\ + \NQ\ + \YM\ portfolio earns a Sharpe ratio of
+0.78 (37.5\% in total) against 0.72 for \ES\ + \NQ. \ZN\ loses steadily, and because equal-risk
+weights give it the largest weight, it turns the four-market portfolio negative ($-0.34$). Both
+results match the DTW book: the equity indices carry the edge, adding \YM\ broadens the book, and
+\ZN\ should be kept out at these costs. The comparison also locates the DTW book's role. As a
+source of direction it is weaker than the surprise in every market; as a second opinion on the
+surprise and as a book whose returns are nearly uncorrelated with it, it is useful.
+
+Figure~\ref{fig:vs_surprise_cum} shows how these books earn over time, on all screened releases and
+on CPI alone, and adds a fourth book that blends the two signals instead of requiring agreement.
+In \ES\ and \NQ\ the surprise-only book is the highest curve on the broad set of releases, and the
+DTW-only book drifts down in \ES\ from 2022 and goes flat in \NQ\ after 2023, the same break as in
+\ref{sec:2022}. \YM\ is the one market where DTW adds to the surprise: the blend earns a Sharpe
+ratio of 1.06 and the agree book 0.94, against 0.68 for the surprise alone, with a smoother path and
+without the 2020 drawdown of the surprise book. On CPI the four books are close in every equity
+index and most of their P\&L comes from 2022, so the CPI comparison rests on a single year. In
+\ZN\ all four curves fall steadily; the surprise book falls most because it trades every release
+and pays the cost each time.
+
+\begin{figure}[!tb]
+  \centering
+  \includegraphics[width=\linewidth]{nb06_cumulative_2x2}
+  \caption{Cumulative net P\&L, 2019--2026, two ticks round trip plus \$4.50, of four single-window
+  books: surprise only, DTW only, surprise + DTW agree, and a blend of the surprise and DTW signals.
+  For each market, left: all screened releases; right: CPI only. \ZN\ has no CPI agree
+  trades (flat green line).}
+  \label{fig:vs_surprise_cum}
+\end{figure}
+
+The surprise books above are built on the broad set of screened releases. Our first walk-forward
+study instead trades only the three largest reports---CPI, Core PCE and payrolls---with five
+rules: the naive sign of the surprise, a fitted surprise model, and three versions of that model
+conditioned on the market's state before the release (volatility, momentum and the like). Every
+slope, sign and state model is re-estimated on earlier releases only, and trades pay two ticks plus
+\$4.50. On CPI
+alone the naive sign is the best or close to the best in each equity index, with Sharpe ratios of
+1.03 in \ES, 1.00 in \NQ\ and 0.99 in \YM, and conditioning on the state does not improve on it
+by a significant margin. As in the DTW book, almost all of the gain comes in 2022. Adding PCE and payrolls lowers the naive rule to
+0.33 in \ES\ and 0.38 in \NQ\ (0.57 in \YM). In \ZN\ the fitted models barely trade, because their forecast rarely exceeds a tick,
+and the naive rule loses ($-0.05$ on CPI, $-0.65$ on the three reports). The surprise, in other
+words, gives a better direction than the DTW analogues in the equity indices whether it is traded
+on one report or many, and neither source survives the \ZN\ tick.
+
+

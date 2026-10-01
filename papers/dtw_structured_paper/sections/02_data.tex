@@ -1,0 +1,170 @@
+\papersection{Data}{sec:data}
+
+\subsection{Bloomberg macroeconomic events}\label{sec:bbg}
+
+The event calendar is the Bloomberg U.S.\ economic release calendar from 2010 to 2026. It
+contains 179 release lines---a line is one published statistic, such as ``CPI MoM'' or ``Change
+in Nonfarm Payrolls''---and 27,137 release rows, each with the release date and time in Eastern
+Time, the actual value and the median of the Bloomberg survey of forecasters. Most price and
+labor-market data are released at 08:30, survey indicators such as the ISM indices at 10:00,
+and FOMC decisions at 14:00.
+
+The DTW model uses the calendar for its timing, not its values: a release is an instant $T$ at
+which information arrives, and the model compares the market's reaction at $T$ with its reactions
+at earlier releases. The actual values and the consensus are not used.
+
+Many lines are released together as parts of one report. The CPI report alone produces eight
+lines at the same second, and the Employment Situation report twelve. Trading each line
+separately would trade the same minute several times, so \ref{sec:universe} groups the
+lines into release families before any other step. In the family construction, 163 lines
+collapse into 67 families.
+
+\subsection{Futures data (S\&P 500, Nasdaq-100, Dow, 10-year and 2-year notes)}\label{sec:futures}
+
+We use one-minute OHLCV bars from Databento (CME Globex, \texttt{GLBX.MDP3}) from July 2010 to
+June 2026. Table~\ref{tab:contracts} summarizes the contracts. \ES, \NQ\ and \YM\ are continuous
+front-month series rolled on the calendar; \ZN\ is rolled on volume. For \ES, the first years of
+the vendor file had many incomplete sessions, and we re-pulled 2010--2015 so that the whole
+sample has complete sessions. \YM\ (\$5 per index point, tick one point) is the only other
+U.S.\ equity-index future on the same feed with one-minute history from 2010. Its file has 5.2
+million one-minute bars; cleaning keeps 3,754 sessions (84--95\% of each year's sessions), and
+4.8\% of the kept minutes are filled with the last price, 8--15\% before 2016, like early \NQ,
+and under 2\% from 2018.
+
+\begin{table}[!tb]
+  \centering\footnotesize
+  \caption{Contracts.}\label{tab:contracts}
+  \begin{threeparttable}
+  \begin{tabular}{lccccc}
+    \toprule
+    & \ES & \NQ & \YM & \ZN & \ZT \\
+    \midrule
+    Underlying & S\&P 500 & Nasdaq-100 & Dow Jones Ind. & 10-year note & 2-year note \\
+    Continuous series & calendar roll & calendar roll & calendar roll & volume roll & --- \\
+    Tick size & 0.25 points & 0.25 points & 1 point & 1/64 point & --- \\
+    Value of one point & \$50 & \$20 & \$5 & \$1,000 & --- \\
+    Value of one tick & \$12.50 & \$5.00 & \$5.00 & \$15.625 & --- \\
+    One tick, in bps of contract value & $\approx 0.5$ & $\approx 0.1$--$0.3$ & $\approx 0.25$--$1$ & $\approx 1.4$ & --- \\
+    Role in this paper & traded & traded & traded & cost-gated & dropped \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Notes: Databento \texttt{GLBX.MDP3}, one-minute bars, July 2010 to June 2026.
+    \ZT\ was pulled but dropped: before 2019, fewer than 7\% of its release windows have a
+    trade in every minute, and a check against tick-level trades confirmed that the gaps are
+    minutes without trading, not missing data.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\paragraph{Sessions.} A trading session runs from 18:00 to 17:00 Eastern Time and is dated by
+the day on which it closes. We drop exchange holidays and keep a session only if it has at least
+85\% of the asset's median number of bars per weekday session in that year; the threshold is
+relative because \ZN\ and early \NQ\ and \YM\ trade fewer minutes than \ES. Minutes without a trade inside
+a kept session are filled with the last price. Bars are labelled by their start: the bar
+labelled 08:30 covers 08:30:00--08:30:59.
+
+\paragraph{Rolls.} A path or trade that straddles a change of contract would include the
+calendar-spread jump. We drop any game in which the contract changes between the first minute
+of its path and its exit, and buy-and-hold benchmarks skip the price jump at each roll.
+
+\begin{figure}[!tb]
+  \centering
+  \includegraphics[width=\linewidth]{fig01_markets_overview_2x2}
+  \caption{\ES, \NQ, \YM\ and \ZN, 2010--2026. Roll-adjusted daily prices rebased to 100. Grey: the
+  2019--2026 period; red: the 2022 inflation shock.}
+  \label{fig:markets}
+\end{figure}
+
+Figure~\ref{fig:markets} shows the equity and Treasury futures over the sample, including \YM.
+
+\subsubsection{Why we chose to look at these}\label{sec:why_assets}
+
+All five contracts are among the most liquid futures in the world, trade nearly around the clock
+on CME Globex, and react to the same U.S.\ releases, so one calendar and one session definition
+serve them all. They differ in how they should react. A hot inflation print raises the expected
+path of the policy rate and lowers the present value of future earnings, more so for the
+long-duration technology stocks that dominate \NQ; the Dow behind \YM\ holds fewer technology and
+more industrial and financial stocks than the S\&P 500, so it tests whether what works in \ES\
+carries to a different mix of the same market. The Treasury notes respond to the same news through
+yields: the CPI surprise explains about 30\% of the five-minute reaction of \ZN, as it does for
+\ES. What separates the markets for a strategy that trades often is the tick: one tick is about
+0.5 bps of contract value in \ES, 0.1--0.3 bps in \NQ\ and 0.25--1 bp in \YM, but about 1.4 bps in
+\ZN, large next to its 30-minute moves. \ES\ and \NQ\ are the core of the book; \YM\ was added after
+their results were known, as an out-of-sample market; \ZN\ is a candidate that a cost gate admits
+or excludes (\ref{sec:gating}).
+
+\subsubsection{Why we dropped the 2-year}\label{sec:why_zt}
+
+The 2-year note future (\ZT) is the most direct read on the expected policy rate and would be the
+natural market for rate news. But a path-based method needs a price in every minute of the path,
+and before 2019 fewer than 7\% of \ZT's release windows have a trade in every minute. A fresh
+pull compared against tick-level trades matched exactly, so the gaps are minutes in which \ZT\ did
+not trade, not missing data. With a library that sparse before 2019, the analogues cannot be
+built, so we dropped \ZT\ at the data stage.
+
+\subsection{Data for DTW: the event panel}\label{sec:dtwdata}
+
+The DTW model does not use the bars directly. It uses a panel of \emph{games} built from them, one
+row for each asset, release family, release time and window (\ref{sec:universe}, \ref{sec:five}).
+Each row carries three objects, all taken from the cleaned one-minute closes of
+\ref{sec:futures}:
+\begin{itemize}\itemsep0pt
+  \item \textbf{The path:} the 31 closes ending at the entry minute, standardized within the
+  window (equation~\eqref{eq:path}). For the first window the path ends at $T+1$, so it holds the
+  last half hour before the release and the first minute of the reaction.
+  \item \textbf{The target:} the log return from the close of the entry minute to the close 30
+  minutes later, the return that the trade earns.
+  \item \textbf{The labels:} the family, the clock slot, the window, the contract and whether the
+  family passes the impact screen in that year (the \emph{admitted} flag).
+\end{itemize}
+A game is kept only if every minute of its path and of its holding window is inside a kept session,
+the release minute and the minute after it have a price, and the same contract is traded from the
+first minute of the path to the exit. A missing minute is never interpolated; the game is dropped.
+The release times come from the Bloomberg calendar (\ref{sec:bbg}), after the 163 release lines
+are grouped into 67 families.
+
+Every game, admitted or not, enters the library of candidate analogues; only admitted games are
+traded. The library is therefore much larger than the traded set: on \ES\ there are about 57,000
+games in 2010--2026 but 3,420 admitted ones (Table~\ref{tab:panel}). The first three years,
+2010--2012, are a burn-in period: they fill the library and give the impact screen its 30 earlier
+releases, but no game in them is scored. The DTW features are computed for admitted games only,
+from strictly earlier games in the library, so the panel can be built once and then split by year
+into the training, validation and test samples of \ref{sec:whattest}. The panel for the four
+assets has 223,583 rows.
+
+\begin{table}[!tb]
+  \centering\footnotesize
+  \caption{The DTW event panel, 2010--2026.}\label{tab:panel}
+  \begin{threeparttable}
+  \begin{tabular}{lrrrr}
+    \toprule
+    & \ES & \NQ & \YM & \ZN \\
+    \midrule
+    Clean one-minute bars (millions) & 5.39 & 5.26 & 5.20 & 5.39 \\
+    Games, all 67 families & 57,146 & 55,317 & 54,455 & 56,665 \\
+    Families admitted in some year & 8 & 8 & 5 & 12 \\
+    Admitted games with DTW features & 3,420 & 2,735 & 2,390 & 5,420 \\
+    \quad of which scored in training, 2013--2017 & 820 & 525 & 640 & 1,085 \\
+    \quad of which scored in validation, 2018--2020 & 840 & 665 & 460 & 1,130 \\
+    \quad of which in the test years, 2021--2026 & 1,760 & 1,545 & 1,290 & 3,090 \\
+    Trades in the test years, 2021--2026 (after the gate) & 1,202 & 1,141 & 870 & 1,945 \\
+    Median analogue dispersion $\sigma_e$ (bps) & 17.8 & 24.1 & 17.0 & 6.1 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Notes: A game is one (asset, family, release, window). All games form the library of
+    candidate analogues; admitted games are those whose family passes the impact screen in that
+    year, and only they are traded. Trades in the test years are admitted games that pass the gate
+    of equation~\eqref{eq:gate}, after games at the same minute are merged.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+The panel is small where it matters. Training scores 820 \ES\ games and validation 840, and the
+signal we look for is a correlation of a few hundredths; this is why the setting is fixed in
+advance and checked once (\ref{sec:robust}). The panel is also uneven across assets: the impact
+screen admits more families on \ZN, because the Treasury market reacts to more of the calendar, and
+\ZN's analogues disagree by a third as much as \ES's in bps, in line with its smaller moves. \YM\ has the
+fewest admitted families: CPI, payrolls, the ISM Manufacturing and Services indices and the FOMC
+Minutes, the core of the \ES\ list without Core PCE, Retail Sales and Wholesale Inventories.

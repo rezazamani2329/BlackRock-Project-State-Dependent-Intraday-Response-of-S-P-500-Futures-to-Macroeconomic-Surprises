@@ -1,0 +1,23 @@
+\papersection{Introduction}{sec:intro}
+
+Scheduled macroeconomic releases are among the cleanest information events in financial markets.
+Their timing is announced months in advance, and futures prices react within the first minute
+\citep{Fleming1999, Balduzzi2001, Andersen2003}. In equity-index futures, however, part of the
+move continues well after that minute: after a hot CPI print the E-mini S\&P 500 (\ES) falls about
+37 basis points (bps) in the first minute and a further 17 bps over the next half hour. This paper
+asks whether the \emph{shape} of the market's reaction to a release, compared with its reactions
+to earlier releases, forecasts that next move.
+
+We match the price path around each release to past paths with dynamic time warping (DTW) and
+trade the move that followed the closest matches. The book trades five back-to-back 30-minute
+windows after every release that moves the market, enters only after the release is public, and
+is scored on the held-out years 2021--2026 after costs in four futures markets: the S\&P 500 (\ES),
+Nasdaq-100 (\NQ) and Dow (\YM) equity indices and the 10-year Treasury note (\ZN).
+
+Three findings stand out. First, the dispersion of the matches forecasts the size of the next
+move in every market and year, while their direction is weak and changed sign around 2018.
+Second, the \ES\ book earns a Sharpe ratio of 0.64 at a quarter tick per side with no market beta,
+but \NQ\ earns only 0.11 and \YM, added later as an out-of-sample market, loses ($-0.39$). Third,
+the edge is concentrated in the first window after the release, and in \ZN\ it is smaller than
+one tick. The Sensibility part explains the approach, the Data and Model parts describe the inputs
+and the strategy, and the Backtest part reports the results.

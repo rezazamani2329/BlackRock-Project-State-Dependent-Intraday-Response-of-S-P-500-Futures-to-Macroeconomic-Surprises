@@ -1,0 +1,33 @@
+% In-paper appendix: essential technical material only (counts toward AER page length).
+\section{Surprise Construction}\label{app:surprise}
+
+\paragraph{Release families.} Two release lines belong to the same family if the share of the
+larger line's release timestamps that are shared by both is at least 80\%; families are formed
+transitively (union-find). The family is named after its best-known line (e.g.\ ``CPI'').
+Families need at least 30 releases to be traded.
+
+\paragraph{Standardization.} For each line, $z_{l,t}$ in equation~\eqref{eq:z} uses the standard
+deviation of the line's earlier raw surprises only, requires at least 24 of them and is capped at
+$\pm5$. Releases are de-duplicated by line and timestamp, keeping the last revision.
+
+\paragraph{Signs and screen.} For each market and year, the sign $s_l$ is the sign of the OLS
+slope of the first-minute return on $z_{l,t}$ over earlier years (at least 24 observations). The
+impact screen ranks families by the ratio of their mean absolute 30-minute reaction to the same
+statistic at the same clock time on other families' releases, over earlier years, and admits the
+top ten, plus CPI.
+
+\section{Dynamic Time Warping Forecast}\label{app:dtw}
+
+For a query path $q$ and a candidate path $c$, both z-scored and of length $n$, the DTW distance is
+\[
+  d(q,c) = \min_{\pi\in\mathcal{P}_w} \sum_{(i,j)\in\pi} (q_i - c_j)^2 ,
+\]
+where $\mathcal{P}_w$ is the set of monotone alignment paths that stay within a Sakoe--Chiba band
+of $w$ minutes of the diagonal \citep{Sakoe1978}. Candidates are earlier releases at the same clock
+time whose trade had closed before the current entry, within a three-year lookback and at most the
+600 most recent. For the $k$ nearest candidates with distances $d_j$, ages $a_j$ (years) and
+subsequent 30-minute returns $y_j$, the weights are $\omega_j \propto d_j^{-1}\,2^{-a_j/2}$, the
+direction forecast is $\mu=\sum_j\omega_j y_j$ and the dispersion forecast is
+$\sigma=\big(\sum_j\omega_j (y_j-\mu)^2\big)^{1/2}$. The ladder trades $\operatorname{sign}(\mu)$ when
+$\mu$ lies outside the 30th--70th percentiles of its earlier values, with size
+$\min\{\text{median}(\sigma)/\sigma,\,2\}$ contracts.

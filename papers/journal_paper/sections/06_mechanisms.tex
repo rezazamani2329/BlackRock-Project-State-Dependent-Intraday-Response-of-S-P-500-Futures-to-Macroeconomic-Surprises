@@ -1,0 +1,45 @@
+\section{Interpretation}\label{sec:mechanisms}
+
+\subsection{Why equities and not Treasuries: tick size as a limit to arbitrage}
+
+The surprise explains the first-minute response of \ZN\ as well as that of the equity indices, so
+the absence of a tradeable drift in \ZN\ is not a failure of the signal. Two features of the
+Treasury market explain it. First, a CPI or payrolls surprise maps into the expected policy path,
+and hence into Treasury yields, almost mechanically, and the Treasury futures market is where the
+fastest participants price that information. By the time a position can be opened, the move is
+largely complete: the drift per standard deviation of the CPI signal is 0.8 bps in \ZN, against
+about 6 bps in \ES\ and 8.5 bps in \NQ. For equities, investors must also judge the effect of the same number on
+growth, margins and risk premia, and the drift is largest in \NQ, whose value depends most on
+long-dated cash flows; \YM, with more industrial and financial stocks, reacts about 8\% less than
+\ES\ but drifts by the same amount after the first minute. Second, even where a gross edge exists, one \ZN\ tick is large relative to
+the post-release move: the naive CPI rule earns 2.7 bps per trade before costs and pays 3.0 bps to
+trade, and the DTW ladder's gross Sharpe ratio of 0.34 becomes $-0.97$ at a quarter tick per side.
+The minimum price increment thus acts as a limit to arbitrage that leaves a small predictable
+component in prices unexploited.
+
+\subsection{Why price-path analogues fail on direction}
+
+Analogue forecasts assume that the mapping from recent price shapes to subsequent returns is
+stable. Around macro releases it was not. The analogues' direction forecast had a negative rank
+correlation with subsequent returns in 2013--2017 and a positive one in 2018--2020, and the
+single-window analogue book that earned money in 2018--2020 lost money in \ES\ and \NQ\ in
+2021--2026; on \YM, added later, it earned little in either period. Across 567 constructions of the analogue forecast (waiting times, path
+lengths and neighbour weights) the training and validation correlations are almost unrelated
+(correlation 0.07 across settings). The change coincides with the shift of the macro regime from
+low inflation to the 2021--2022 inflation shock, when the same price shape could precede
+continuation or reversal depending on how the market read the Federal Reserve's response. What the
+analogues do capture is uncertainty: when similar past paths were followed by very different
+outcomes, the next move tends to be large. This is why their dispersion is a stable forecast of
+the size of the move and a useful input for position sizing, while their direction is not.
+
+\subsection{What the entry assumption reveals about the speed of price discovery}
+
+The classifier result in Table~\ref{tab:equalcosts} quantifies how much of the forecastable
+component of returns is priced within the first minute. Moving the entry by one minute removes
+about 80\% of the gross profit of a model that combines surprise and price information. Together
+with the event-study evidence that roughly a quarter of the CPI response remains after the first
+minute in equity futures, this places most of the price discovery within the first minute and a
+small, economically meaningful residual in the following half hour. The residual is predictable
+from public information, persists for about 30 minutes---a second 30-minute window after the release
+earns negative returns in every market---and is concentrated in periods when macro data drive
+expectations of monetary policy.

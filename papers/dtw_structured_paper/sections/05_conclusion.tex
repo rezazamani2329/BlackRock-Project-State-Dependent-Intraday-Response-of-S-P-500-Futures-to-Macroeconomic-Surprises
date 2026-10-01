@@ -1,0 +1,31 @@
+\papersection{Conclusion}{sec:conclusion}
+
+We asked whether the shape of the market's reaction to a scheduled macroeconomic release, matched
+to earlier reactions with dynamic time warping, forecasts the next move in futures. Restricting
+the library to post-release windows makes the method fast and gives every match a common cause,
+and the answer has two parts.
+
+The analogues forecast the size of the next move well. The dispersion of the neighbours' outcomes
+ranks the absolute next return in every market and period, and sizing trades inversely to it
+improves the \ES\ and equities books under every rule we tested.
+
+The analogues forecast the direction of the next move only weakly, and not stably. Their
+directional information coefficient was negative in 2013--2017 and positive afterwards. With the
+setting and rule fixed in advance, the \ES\ book earns a Sharpe ratio of 0.64 at a quarter tick on
+2021--2026, with no market beta, a drawdown of $-5\%$, a direction that beats random signs and a
+timing that passes a leak test; the equities book earns 0.54. But \NQ\ earns only 0.11, \YM---run
+through the same pipeline as an out-of-sample market---loses, and the \ES\ result ranges from 0.17
+to 0.64 across reasonable constructions. The edge sits in the first window after the release, the
+2022 loss came from a change in what similar paths did next rather than from poor matches, and in
+\ZN\ the larger moves of the new rate regime still left the edge below one tick.
+
+Three conclusions follow for practice. First, anchoring to scheduled events and entering only
+after the release are what make a path-based method testable at all. Second, DTW is best used for
+what it measures robustly---the size and uncertainty of the next move---while the direction comes
+from a source with a clearer economic link, such as the consensus surprise, with which the DTW
+book is nearly uncorrelated and which it improves as a filter in \YM\ and in \ES's CPI trades
+(\ref{sec:vs_surprise}). Third, before any capital is committed, the book needs recorded fills
+in the minutes after releases, because slippage decides whether a per-trade edge of this size
+survives. Natural extensions are a book that trades only the first window, averaging the
+forecasts of the best settings, and a direction signal that combines the surprise with the shape
+of the reaction.

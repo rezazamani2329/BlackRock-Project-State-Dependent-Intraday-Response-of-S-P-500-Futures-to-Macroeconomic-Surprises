@@ -1,0 +1,134 @@
+\section{Results}\label{sec:results}
+
+\subsection{Consensus surprises forecast the drift}
+
+We first evaluate the surprise approach on its own, walk-forward over 2019--2026 at our base cost
+of two ticks plus \$4.50. Trading the sign of the CPI headline surprise earns a net Sharpe ratio
+of 1.03 in \ES\ and 1.00 in \NQ, with 9.8 and 13.6 bps per trade over about 86 and 79 releases. The
+CPI model, which trades only when the predicted move exceeds the cost, earns 0.99 in \ES\ and 0.79
+in \NQ, with hit rates of 64\% and 58\%. The same rule on the E-mini Dow, a market added after the
+\ES\ and \NQ\ results were known, earns 0.99 (77 trades, hit rate 57\%). The 90\% block-bootstrap confidence interval of the \ES\
+Sharpe ratio is 0.25 to 1.72. In the format common among practitioners, the \ES\ CPI strategy gains
+6.6\% of notional while being long in exactly the same 30-minute windows loses 6.0\%; in \NQ\ the
+figures are $+7.5\%$ and $-5.4\%$. The profit therefore comes from the direction of the surprise,
+not from being in the market at release times. In \ZN\ the naive rule earns 2.7 bps per trade
+before costs (gross Sharpe 0.53) and $-0.3$ bps after them; the CPI model correctly declines to
+trade.
+
+Trading the ten screened families rather than CPI alone raises the number of trades tenfold, to 98
+a year in \ES\ and 97 in \NQ, with net Sharpe ratios of 0.65 and 0.71, 1.7 and 2.4 bps per trade, and
+random-sign $p$-values below 0.001 and of 0.005. CPI remains the largest contributor in both markets
+($+4.3\%$ and $+6.0\%$ of notional); behind it the ranking of families differs between \ES\ and \NQ,
+so the broad book should be read as diversification across many small edges. On \YM\ the broad book
+earns 0.68 (about 93 trades a year, random-sign $p=0.006$). Combining \ES\ and \NQ\ gives about 195
+trades a year and a Sharpe ratio of 0.72 (random-sign $p<0.001$); adding \YM\ gives about 290 trades
+and 0.78, with a 90\% confidence interval of 0.10 to 1.50.
+
+\subsection{Transaction costs and turnover}
+
+Figure~\ref{fig:costs} shows how the CPI strategy's Sharpe ratio changes as the round-trip
+slippage rises from zero to eight ticks. The line falls gently in \ES\ (1.15 to 0.62) and is almost
+flat in \NQ\ (1.02 to 0.81), because one \NQ\ tick is only 0.1--0.3 bps of the contract value. \YM,
+whose tick is about 0.25--1 bp, sits between them (1.06 to 0.81). In \ZN\ the naive rule crosses
+zero at about two ticks. For the broad book, the \ES\ Sharpe ratio falls from 1.09 gross to 0.20 at
+four ticks, while \NQ\ stays at 0.60 and \YM\ falls from 0.91 to 0.45. Cost robustness is therefore a
+property of the market's tick size relative to its post-release moves, not only of the strategy.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig20_cost_sensitivity_4markets}
+  \caption{Net Sharpe ratio of the CPI strategies as round-trip slippage rises from 0 to 8 ticks
+  (plus a \$4.50 commission), \ES, \NQ, \YM\ and \ZN, 2019--2026.}
+  \label{fig:costs}
+\end{figure}
+
+\subsection{Four approaches on equal terms}
+
+Table~\ref{tab:strategies} compares the four approaches on the held-out years 2021--2026 with
+the same bars, entry, costs and metrics. At a quarter tick per side, the surprise book has the
+highest Sharpe ratio in \ES\ (1.09), \NQ\ (0.75) and \YM\ (1.06), followed in \ES\ by the classifier
+(0.95), the DTW ladder (0.64) and the event games (0.42). At our base cost the ranking changes: the
+classifier (0.81) and the surprise book (0.74) remain clearly positive, the DTW ladder falls to
+0.10, and the event games, which trade about 370 times a year, turn negative. In \ZN\ every
+approach loses money after costs, although the DTW ladder earns a gross Sharpe ratio of 0.34. On
+\YM\ the DTW ladder, run with the same code and setting, loses even before costs ($-0.32$ gross,
+$-0.39$ at a quarter tick), while the surprise book earns 1.06: the third equity index confirms the
+surprise and not the price-path analogues. The
+surprise book is positive in both the validation and the test years on every equity market (\ES\
+1.04 and 1.09, \NQ\ 0.86 and 0.75, \YM\ 1.27 and 1.06).
+
+\input{tables/tab_strategies}
+
+\subsection{Combining surprises and price-path analogues}
+
+If the price path before the entry carried information beyond the surprise, conditioning the
+surprise on the analogues should improve it. It does not. Across all releases from 2019 to 2026, the
+rank correlation of the DTW direction forecast with the next 30-minute return is 0.010 in \ES,
+0.026 in \NQ, 0.030 in \YM\ and 0.039 in \ZN, its hit rate is 47--51\%, and its correlation with the
+surprise is 0.02--0.13. In the held-out comparison (Figure~\ref{fig:surprise_dtw}), keeping a surprise trade only
+when the analogues agree raises the \ES\ Sharpe ratio in the validation years (1.46 against 1.04)
+but lowers it in the test years (0.37 against 1.09); \NQ\ shows the same reversal (1.21 against 0.86,
+then 0.48 against 0.75). The reason is that the direction of the analogues itself changed sign: the
+DTW-only book earned 0.57 (\ES) and 0.78 (\NQ) in 2018--2020 and $-0.26$ and $-0.28$ in 2021--2026.
+\YM\ does not show the reversal, but it does not show a gain either: its DTW-only book earns 0.40
+and 0.44 in the two periods, and the agreement filter lowers the surprise book in the validation
+years (0.63 against 1.27) and leaves it unchanged in the test years (1.04 against 1.06). In the
+walk-forward evaluation on 2019--2026 a blend of the two signals raised the \YM\ broad book from
+0.68 to 1.06, but the bootstrap probability that it is not better is 6\%, and the same blend does
+not help in \ES\ or \NQ. A filter that helps in only one of two periods, or on one of three equity
+indices, is not a reliable source of information. In
+contrast, the dispersion of the analogues predicts the size of the next move with a rank
+correlation of 0.10--0.30 in every market and year, and sizing surprise trades inversely to it
+gives Sharpe ratios of 0.63 and 0.72 in \ES\ and 0.64 and 0.97 in \NQ\ in the training and validation
+years.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{surprise_dtw_book_cumulative}
+  \caption{Cumulative net P\&L at a quarter tick per side, 2021--2026, of the surprise books
+  (top-10 families and CPI model), the DTW-only book and the surprise books filtered by DTW
+  agreement, in \ES, \NQ, \ZN, \YM\ and equal-risk \ES\ + \NQ\ and \ES\ + \NQ\ + \YM\ books.}
+  \label{fig:surprise_dtw}
+\end{figure}
+
+\subsection{The entry assumption}
+
+Table~\ref{tab:equalcosts} re-prices each approach's own \ES\ book on 2019--2026 at three cost
+levels. The classifier's reported Sharpe ratio of 2.14 (total return 38.6\% gross) falls to 0.92
+(7.3\%) when the same positions are entered one minute later: about 80\% of the reported profit is
+the first-minute jump. An independent rebuild of the classifier's pipeline finds a loss of about
+96\% of the profit per trade from the same one-minute delay. The first minute is where the market
+prices the news, and it cannot be traded.
+
+\input{tables/tab_equal_costs}
+
+\subsection{Diversification across approaches}
+
+Daily returns of the four approaches are nearly uncorrelated. In the test years the correlations
+across approaches range from $-0.04$ to 0.31, the highest being between the surprise book and the
+classifier, which also uses surprise features; the surprise and DTW ladder books correlate at 0.13
+on \ES. The high correlations are the same surprise strategy on different equity indices (\ES\ and
+\NQ\ 0.68, \ES\ and \YM\ 0.85), because the same releases move all of them. We therefore combine
+the approaches with equal-risk weights, proportional to the inverse of each book's daily volatility
+in 2018--2020, and score them on 2021--2026 (Table~\ref{tab:portfolios} and Figure~\ref{fig:team}).
+At a quarter tick per side, the \ES\ portfolio of the four approaches earns a Sharpe ratio of
+\textbf{1.39}, the equity portfolio on \ES, \NQ\ and \YM\ 1.35 and the \ES\ + \NQ\ portfolio 1.31, above
+the best single approach (1.09) with less than half its volatility (1.2--1.3\% against 2.7\%) and a
+maximum drawdown of about $-1\%$. The surprise book and the DTW ladder alone earn 1.09 and 0.64 on
+\ES; together they earn 1.16, because they lose in different years: 2022, the surprise book's best
+year, is the only year in which the DTW ladder loses. At our base cost the equity portfolio on
+\ES, \NQ\ and \YM\ holds up best (0.85), ahead of the surprise book on the same three markets
+(0.82) and of the \ES\ portfolio (0.76), whose high-turnover pattern-based books pay the cost on 300
+or more trades a year. Adding \ZN\ lowers the combined Sharpe ratio to 0.83 at a quarter tick and
+turns it negative at our base cost.
+
+\input{tables/tab_portfolios}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{team_report_figure}
+  \caption{Cumulative net P\&L at a quarter tick per side, 2021--2026: each approach in \ES\
+  (left), in \NQ, \ZN\ and \YM\ (center), and the team portfolios with the DTW ladder's own
+  \ES\ + \NQ\ book (right).}
+  \label{fig:team}
+\end{figure}

@@ -1,0 +1,35 @@
+\papersection{Sensibility}{sec:sense}
+
+Markets rarely react to the same news on the same clock. The shape of the repricing repeats, but
+the timing may differ by a few minutes from one release to the next. A distance metric that cannot
+see through that slippage will call two identical reactions different. Dynamic time warping (DTW)
+measures the similarity between two time series while letting their time axes stretch and
+compress, so two paths are close if they trace the same shape, even when one runs faster or lags
+the other \citep{Sakoe1978, Berndt1994}. This feature makes DTW well suited to price data:
+Euclidean distance compares minute by minute, and correlation is just as rigid in time. We use
+DTW as an analogue forecaster \citep{Lorenz1969}. We rank historical price paths by their
+similarity to a target window and read off the returns that followed. We posit that similar price
+paths have similar short-term forward returns. Figure~\ref{fig:dtw} illustrates the alignment.
+
+\begin{figure}[!tb]
+  \centering
+  \includegraphics[width=0.6\linewidth]{dtw_illustration}
+  \caption{How DTW compares two price paths (stylized example). Panel (a): the lines connect the
+  points that DTW aligns; the past path reaches the same low about two minutes later. Panel (b):
+  the local cost inside the band $|i-j|\le 5$ and the optimal warping path (orange); the dashed
+  diagonal is the minute-by-minute (Euclidean) alignment.}
+  \label{fig:dtw}
+\end{figure}
+
+Applied naively, DTW runs into two problems. The first is cost: comparing a target against every
+window in years of minute-level data is slow. The second is that, with a large enough library,
+some historical paths will match the target by pure luck, and a lucky match says nothing about why
+the path formed. We address both issues by restricting the library to windows that follow
+scheduled macroeconomic releases such as CPI and the Jobs Report, events macro traders reliably
+react to. The library shrinks, and every match shares a common root: one public shock at a known
+time, with participants repricing rate expectations together. Our refined hypothesis is that
+similar price paths following scheduled macro releases have similar short-term forward returns.
+For example, take the price path following a CPI release. Compared against past paths following
+other releases, such as the Jobs Report, retail sales or PCE, most will strongly differ, yet a
+few will trace nearly the same shape. Those few are far more likely to reflect the same
+repricing than sheer luck.

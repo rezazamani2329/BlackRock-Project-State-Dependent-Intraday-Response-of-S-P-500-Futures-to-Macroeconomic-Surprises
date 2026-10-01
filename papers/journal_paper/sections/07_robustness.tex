@@ -1,0 +1,75 @@
+\section{Robustness}\label{sec:robust}
+
+\subsection{Dependence on 2022}
+
+The CPI strategy earned most of its profit in 2022, when inflation dominated markets and every CPI
+print moved the expected path of the policy rate (Figure~\ref{fig:byyear}): 79\% of its net P\&L
+in \ES\ and 74\% in \NQ. Excluding 2022, its Sharpe ratio falls from 1.03 to 0.58 in \ES\ and from 1.00
+to 0.68 in \NQ\ for the naive rule. \YM\ repeats the pattern: 2022 contributes 4.1 of its 6.8
+percentage points, and its Sharpe ratio excluding 2022 is about 0.5. The broad book, which spreads its risk over about ten releases,
+is less concentrated: its Sharpe ratio excluding 2022 is 0.28 in \ES, 0.44 in \NQ\ and 0.40 in \YM, and the
+surprise books are positive in both the validation and the test years of the equal-terms
+comparison. We read the result as state dependence at the level of the macro regime: the drift is
+largest when macro data drive policy expectations.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig18_cpi_pnl_by_year_4markets}
+  \caption{Net P\&L of the CPI strategies by calendar year (\% of notional), \ES, \NQ, \YM\ and \ZN.}
+  \label{fig:byyear}
+\end{figure}
+
+\subsection{Entry delay and holding period}
+
+The \ES\ CPI Sharpe ratio remains between 0.55 and 0.71 when the entry is delayed by one, two or five
+minutes with a 30-minute hold, and between 0.51 and 0.62 in \NQ. \YM\ is more sensitive to the
+delay: from 0.84 with no delay to 0.54, 0.33 and 0.17 after one, two and five minutes. Short holds are fragile: a
+five-minute hold loses most of its Sharpe ratio when the entry is delayed by one minute. The edge is a
+slow continuation over about half an hour, not a fast reaction.
+
+\subsection{More windows per release}
+
+A natural way to trade more often is to trade several consecutive windows after each release.
+Figure~\ref{fig:ladder} shows that only the first window is clearly profitable, and mainly for the
+surprise: the surprise's rank correlation with the return falls from 0.139 in the first 30 minutes
+in \ES\ (0.088 in \NQ\ and 0.091 in \YM) to between $-0.06$ and $+0.05$ in the next four windows.
+The analogues have no information in any window in \ES, \NQ\ and \ZN; in \YM\ their first window
+earns 0.47 and the later ones lose. Every additional window adds turnover and cost but not profit; five-window
+books lose between 29\% and 48\% of notional in \ES\ over 2019--2026, and on \YM\ the five-window
+surprise and DTW books have Sharpe ratios of $-0.34$ and $-0.23$.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{fig28_ladder_sharpe_by_window_4markets}
+  \caption{Net Sharpe ratio of the surprise and DTW signals traded in each of the five 30-minute
+  windows after a release, \ES, \NQ, \YM\ and \ZN, 2019--2026.}
+  \label{fig:ladder}
+\end{figure}
+
+\subsection{Construction choices and multiple testing}
+
+Pattern-based results are sensitive to reasonable construction choices. For the \ES\ DTW ladder,
+the Sharpe ratio on 2021--2026 at a quarter tick ranges from 0.17 to 0.64 across the number of
+neighbours, the width of the trading gate and whether its thresholds are fixed or re-estimated;
+across 63 variations of waiting time, path length and neighbour weights, it ranges from $-0.45$ to
+0.61. The original implementation of the ladder, with its own family grouping and data, reaches
+0.64 in \ES\ on 2021--2026 at a quarter tick (random-sign $p=0.04$) but 0.11 in \NQ, and its
+direction forecast has a negative rank correlation with returns in the training years. The best of
+many such variations overstates what an investor could expect
+\citep{Harvey2016, Bailey2014}. The surprise approach has few free choices, and its main
+constants were fixed before the test years were scored. The pattern-based books also pass a leak
+test: extending the price path five minutes past the entry raises the \ES\ DTW Sharpe ratio from
+0.64 to 2.86, so the timing of the real book is correct and the information is not coming from
+the future. In the state-dependence analysis, analytic HC3 and permutation $p$-values agree closely,
+and we report only effects that survive the false-discovery correction of \citet{Benjamini1995}.
+
+\subsection{Limitations}
+
+Our results are subject to five limitations. First, costs are modeled rather than observed; fills
+in the first minute after a release may be worse than two ticks. Second, the sample contains about
+120 releases per family, and CPI-only results rest on 50--90 trades. Third, the event-game setting was
+chosen on the full sample, and the \YM\ results were produced after the \ES\ and \NQ\ results were
+known, although with unchanged code and constants. Fourth, the test years have been examined more than once during the
+project, so they are not an untouched hold-out for any approach. Fifth, for near-zero CPI surprises
+the sign depends on which CPI line is used: the headline and the family average disagree on 20 of
+86 releases, which changes the CPI Sharpe ratio from 1.03 to 0.51 in \ES.
